@@ -26,6 +26,34 @@
         }
       }
     },
+    "/api/UserAuth/ValidateOtp": {
+      "get": {
+        "tags": [
+          "UserAuth"
+        ],
+        "parameters": [
+          {
+            "name": "MobileNumber",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Otp",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/WeatherForecast": {
       "get": {
         "tags": [

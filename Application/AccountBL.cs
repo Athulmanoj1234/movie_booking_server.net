@@ -6,7 +6,7 @@ using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.services;
-using System.Runtime.CompilerServices;
+
 
 namespace movie_booking.Application
 {
@@ -21,17 +21,21 @@ namespace movie_booking.Application
         public string Otp;
         public string AccessToken;
         public string RefreshToken;
-        public bool isLoogedIn = false;
+        public bool isLoggedIn = false;
         //public SuccuessOrErrorResponseDto SuccessResponse;
 
-        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService) {
+        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService)
+        {
             this.Congiguration = configuration;
             this.DbContext = dbContext;
+            this.JwtService = jwtService;
         }
 
-        public async Task<SuccessOrErrorResponseDto<User>> GetOrAddUserbyMobileAsync(string mobileNumber) {
+        public async Task<SuccessOrErrorResponseDto<User>> GetOrAddUserbyMobileAsync(string mobileNumber)
+        {
 
-            if (string.IsNullOrEmpty(mobileNumber)) {
+            if (string.IsNullOrEmpty(mobileNumber))
+            {
                 return new SuccessOrErrorResponseDto<User>()
                 {
                     StatusCode = 400,
@@ -50,8 +54,9 @@ namespace movie_booking.Application
 
                 if (user is null || string.IsNullOrEmpty(user.MobileNumber)
                     || string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName)
-                    || string.IsNullOrEmpty(user.Email)) {
-                    
+                    || string.IsNullOrEmpty(user.Email))
+                {
+
                     var userId = Guid.NewGuid();
                     var userEntity = new User()
                     {
@@ -76,7 +81,8 @@ namespace movie_booking.Application
                     Data = user,
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new SuccessOrErrorResponseDto<User>()
                 {
                     StatusCode = 500,
@@ -86,7 +92,8 @@ namespace movie_booking.Application
             }
         }
 
-        public async Task<SuccessOrErrorResponseDto<LoginResponseDto>> ValidateOtpAsync(string MobileNumber, string? Otp) {
+        public async Task<SuccessOrErrorResponseDto<LoginResponseDto>> ValidateOtpAsync(string MobileNumber, string? Otp)
+        {
             if (string.IsNullOrEmpty(MobileNumber))
             {  // || string.IsNullOrEmpty(Otp)
                 return new SuccessOrErrorResponseDto<LoginResponseDto>()
@@ -97,10 +104,12 @@ namespace movie_booking.Application
                 };
             }
 
-            try {
+            try
+            {
                 var user = await this.DbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == MobileNumber);
                 if (user is null || user.UserId == Guid.Empty || string.IsNullOrEmpty(user.MobileNumberPrefix)
-                    || string.IsNullOrEmpty(user.MobileNumber)) {
+                    || string.IsNullOrEmpty(user.MobileNumber))
+                {
                     return new SuccessOrErrorResponseDto<LoginResponseDto>()
                     {
                         StatusCode = 204,
@@ -108,52 +117,113 @@ namespace movie_booking.Application
                         Messege = "user needs to be regitered/no user details in db",
                     };
                 }
-                this.isLoogedIn = true;
-
-                if (this.isLoogedIn) {
-                    var accessToken = this.JwtService.GenerateAccessToken(user);
-                    var refreshToken = await this.JwtService.GenerateAndStoreRefreshTokenAsync(user);
-                    var cookieOptions = new CookieOptions
-                    {
-                        Expires = DateTime.UtcNow.AddDays(4),
-                        HttpOnly = true, //making cookes inaccessable via client side js
-                        Secure = true, //only sent cookies over https
-                        SameSite = SameSiteMode.None,
-                    };
-                    if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken)) {
-                        return new SuccessOrErrorResponseDto<LoginResponseDto>() { 
-                            StatusCode = 500,
-                            IsSuccess = false,
-                            Messege = $"failed to create accesstoken or refresh token",
-                        };
-                    }
-
+                this.isLoggedIn = true;
+                //write otp logic here
+                if (!this.isLoggedIn)
+                {
                     return new SuccessOrErrorResponseDto<LoginResponseDto>()
                     {
-                        StatusCode = 200,
-                        IsSuccess = true,
-                        Messege = $"successfully logined created token and refresh token",
-                        Data = new LoginResponseDto() {
-                            AccessToken = this.AccessToken,
-                            RefreshToken = this.RefreshToken,
-                        }
-                    }; 
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = $"incorrect credentials or failed to login with mobile number try correct mobile number"
+                    };
+                }
+                this.AccessToken = this.JwtService.GenerateAccessToken(user);
+                this.RefreshToken = await this.JwtService.GenerateAndStoreRefreshTokenAsync(user);
+
+                if (string.IsNullOrEmpty(this.AccessToken) || string.IsNullOrEmpty(this.RefreshToken))
+                {
+                    return new SuccessOrErrorResponseDto<LoginResponseDto>()
+                    {
+                        StatusCode = 500,
+                        IsSuccess = false,
+                        Messege = $"failed to create accesstoken or refresh token",
+                    };
                 }
 
                 return new SuccessOrErrorResponseDto<LoginResponseDto>()
                 {
-                    IsSuccess = false,
-                    Messege = $"incorrect credentials or failed to login with mobile number try correct mobile number"
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = $"successfully logged in and created auth accesstoken and refreshtoken",
+                    Data = new LoginResponseDto()
+                    {
+                        AccessToken = this.AccessToken,
+                        RefreshToken = this.RefreshToken,
+                    }
                 };
+
             }
 
-            catch(Exception e) {
-                return new SuccessOrErrorResponseDto<LoginResponseDto>() {
+            catch (Exception e)
+            {
+                return new SuccessOrErrorResponseDto<LoginResponseDto>()
+                {
                     StatusCode = 500,
                     IsSuccess = false,
                     Messege = e.Message,
                 };
             }
         }
+
+
+        public async Task<SuccessOrErrorResponseDto<UsersDto>> UpdateUserDetailsAsync(UserRequestDto UserRequestDto)
+        {
+            if (string.IsNullOrEmpty(UserRequestDto.FirstName) || string.IsNullOrEmpty(UserRequestDto.LastName) || string.IsNullOrEmpty(UserRequestDto.Email))
+            {
+                return new SuccessOrErrorResponseDto<UsersDto>()
+                {
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Messege = $"first name || last name || email is empty or null",
+                };
+            }
+
+            try
+            {
+                var user = await DbContext.Users.FirstOrDefaultAsync(u => u.MobileNumber == UserRequestDto.MobileNumber);
+
+                if (!string.IsNullOrEmpty(user.FirstName) || !string.IsNullOrEmpty(user.LastName) || !string.IsNullOrEmpty(user.Email)) {
+                    return new SuccessOrErrorResponseDto<UsersDto>()
+                    {
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = $"user is registered will full detiails so no need to edit the user details",
+                    };
+                }
+
+                if (user == null || user.UserId == Guid.Empty || string.IsNullOrEmpty(user.MobileNumber) || string.IsNullOrEmpty(user.MobileNumberPrefix))
+                {
+                    return new SuccessOrErrorResponseDto<UsersDto>()
+                    {
+                        StatusCode = 404,
+                        IsSuccess = false,
+                        Messege = $"user info not available/not present in the database",
+                    };
+                }
+
+                var userEntity = new User()
+                {
+                    FirstName = UserRequestDto.FirstName,
+                    LastName = UserRequestDto.LastName,
+                    Email = UserRequestDto.Email,
+                };
+                DbContext.Users.Add(userEntity);
+                DbContext.SaveChanges();
+                return new SuccessOrErrorResponseDto<UsersDto>() {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = $"successfully added/updated user fields",
+                };
+             }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<UsersDto>()
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+            }
+        }
     }
-}

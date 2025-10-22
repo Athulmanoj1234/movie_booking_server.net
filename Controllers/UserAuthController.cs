@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using movie_booking.Application;
 using movie_booking.data;
 using movie_booking.Dtos.Request;
+using movie_booking.Dtos.Response;
 
 namespace movie_booking.Controllers
 {
@@ -36,7 +38,7 @@ namespace movie_booking.Controllers
         }
 
         [HttpGet("ValidateOtp")]
-        public async Task<IActionResult> ValidateOtp([FromQuery] string MobileNumber, string Otp) {
+        public async Task<IActionResult> ValidateOtp([FromQuery] string MobileNumber, string? Otp) {
             var response = await this.AccountBL.ValidateOtpAsync(MobileNumber, Otp);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
@@ -52,9 +54,24 @@ namespace movie_booking.Controllers
                 SameSite = SameSiteMode.Lax // Controls when cookies are sent with cross-site requests
             };
 
-            Response.Cookies.Append("Auth Refresh Token", response.Data.RefreshToken, cookieOptions);
+            Response.Cookies.Append("UserRefreshToken", response.Data.RefreshToken, cookieOptions);
 
             return Ok(response);
         }
+
+
+        [Authorize]
+        [HttpPost("UpdateUserDetails")]
+        public async Task<IActionResult> UpdateUserDetails(UserRequestDto UserRequestDto) {
+            var response = await AccountBL.UpdateUserDetailsAsync(UserRequestDto);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
     }
 }

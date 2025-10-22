@@ -16,6 +16,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "movie_booking.Controllers.UserAuthController",
+    "Method": "ValidateOtp",
+    "RelativePath": "api/UserAuth/ValidateOtp",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MobileNumber",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Otp",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

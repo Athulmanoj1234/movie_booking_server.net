@@ -44,6 +44,16 @@ namespace movie_booking.Controllers
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
 
+            var cookieOptions = new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(7), // Cookie expires in 7 days
+                HttpOnly = true, // Makes the cookie inaccessible to client-side script
+                Secure = true, // Only send the cookie over HTTPS
+                SameSite = SameSiteMode.Lax // Controls when cookies are sent with cross-site requests
+            };
+
+            Response.Cookies.Append("Auth Refresh Token", response.Data.RefreshToken, cookieOptions);
+
             return Ok(response);
         }
     }

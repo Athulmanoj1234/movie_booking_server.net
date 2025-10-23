@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using movie_booking.data;
 using movie_booking.Models;
+using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -54,7 +55,6 @@ namespace movie_booking.services
         }
 
         public async Task<string> GenerateAndStoreRefreshTokenAsync(User user) {
-
             try
             {
                 this._refreshToken = GenerateRefreshToken();
@@ -67,7 +67,13 @@ namespace movie_booking.services
             catch (Exception e) {
                 return e.Message;
             }
-            
+        }
+
+        public bool ValidateRefreshToken(User user, string RefreshToken) {
+            if (user is null || user.RefreshToken != RefreshToken || user.RefreshTokenExpirytime <= DateTime.UtcNow) {
+                return false;
+            }
+            return true;
         }
 
     }

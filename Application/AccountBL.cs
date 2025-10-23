@@ -152,7 +152,6 @@ namespace movie_booking.Application
                         RefreshToken = this.RefreshToken,
                     }
                 };
-
             }
 
             catch (Exception e)
@@ -169,7 +168,8 @@ namespace movie_booking.Application
 
         public async Task<SuccessOrErrorResponseDto<UsersDto>> UpdateUserDetailsAsync(UserRequestDto UserRequestDto)
         {
-            if (string.IsNullOrEmpty(UserRequestDto.FirstName) || string.IsNullOrEmpty(UserRequestDto.LastName) || string.IsNullOrEmpty(UserRequestDto.Email))
+            if (string.IsNullOrEmpty(UserRequestDto.FirstName) || string.IsNullOrEmpty(UserRequestDto.LastName)
+                || string.IsNullOrEmpty(UserRequestDto.Email))
             {
                 return new SuccessOrErrorResponseDto<UsersDto>()
                 {
@@ -225,5 +225,57 @@ namespace movie_booking.Application
                 };
             }
             }
+
+        public async Task<RefreshResponseDto> RefreshAndCreateAccessToken(string RefreshToken) {
+            if (string.IsNullOrEmpty(RefreshToken)) {
+                return new RefreshResponseDto()
+                {
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Message = $"failed to send refresh token in cookies/cookies is null/empty in request",
+                };
+            }
+            try {
+                var user = await this.DbContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == RefreshToken);
+                
+                bool IsRefreshtokenValid = JwtService.ValidateRefreshToken(user, RefreshToken);
+                if (!IsRefreshtokenValid) {
+                    return new RefreshResponseDto()
+                    {
+                        StatusCode = 404,
+                        IsSuccess = false,
+                        Message = $"refresh token is invalid null or expired"
+                    };
+                }
+                this.AccessToken = this.JwtService.GenerateAccessToken(user);
+
+                if (string.IsNullOrEmpty(this.AccessToken)) {
+                    return new RefreshResponseDto()
+                    {
+                        StatusCode = 500,
+                        IsSuccess = false,
+                        Message = $"failed to create accesstoken"
+                    };
+                }
+
+                return new RefreshResponseDto()
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Message = $"refreshed ad successfully created access token",
+                    AccessToken = this.AccessToken,
+                };
+            }
+
+            catch (Exception ex) {
+                return new RefreshResponseDto()
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Message = $"failed to create access token - internal server error",
+                    AccessToken = this.AccessToken,
+                };
+            }
         }
+    }
     }

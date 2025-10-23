@@ -17,6 +17,7 @@ namespace movie_booking.Controllers
         private IConfiguration Congiguration;
         private ApplicationDbContext DbContext;
         public AccountBL AccountBL;
+        private string RefreshToken;
 
         public UserAuthController(IConfiguration configuration, ApplicationDbContext dbContext, AccountBL accountBL) {
             this.Congiguration = configuration;
@@ -57,6 +58,13 @@ namespace movie_booking.Controllers
             Response.Cookies.Append("UserRefreshToken", response.Data.RefreshToken, cookieOptions);
 
             return Ok(response);
+        }
+
+
+        [HttpPost("Refresh")]
+        public async Task<IActionResult> RefreshAndCreateAccessToken() {
+            HttpContext.Request.Cookies.TryGetValue("AuthRefreshToken", out this.RefreshToken);
+            var response = this.AccountBL.RefreshAndCreateAccessToken(this.RefreshToken);
         }
 
 

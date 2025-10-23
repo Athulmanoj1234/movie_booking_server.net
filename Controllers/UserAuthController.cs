@@ -31,7 +31,6 @@ namespace movie_booking.Controllers
             var response = await this.AccountBL.GetOrAddUserbyMobileAsync(MobileNumber);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
-
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
 
@@ -41,9 +40,8 @@ namespace movie_booking.Controllers
         [HttpGet("ValidateOtp")]
         public async Task<IActionResult> ValidateOtp([FromQuery] string MobileNumber, string? Otp) {
             var response = await this.AccountBL.ValidateOtpAsync(MobileNumber, Otp);
-
+            
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
-
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
 
@@ -64,7 +62,13 @@ namespace movie_booking.Controllers
         [HttpPost("Refresh")]
         public async Task<IActionResult> RefreshAndCreateAccessToken() {
             HttpContext.Request.Cookies.TryGetValue("AuthRefreshToken", out this.RefreshToken);
-            var response = this.AccountBL.RefreshAndCreateAccessToken(this.RefreshToken);
+            var response = await this.AccountBL.RefreshAndCreateAccessToken(this.RefreshToken);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Message);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
+
+            return Ok(response);
         }
 
 
@@ -74,7 +78,6 @@ namespace movie_booking.Controllers
             var response = await AccountBL.UpdateUserDetailsAsync(UserRequestDto);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
-            
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
 

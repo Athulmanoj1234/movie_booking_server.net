@@ -237,8 +237,8 @@ namespace movie_booking.Application
             }
             try {
                 var user = await this.DbContext.Users.FirstOrDefaultAsync(u => u.RefreshToken == RefreshToken);
-                
                 bool IsRefreshtokenValid = JwtService.ValidateRefreshToken(user, RefreshToken);
+
                 if (!IsRefreshtokenValid) {
                     return new RefreshResponseDto()
                     {

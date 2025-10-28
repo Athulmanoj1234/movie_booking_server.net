@@ -48,7 +48,7 @@ namespace movie_booking.Controllers
             var cookieOptions = new CookieOptions
             {
                 Expires = DateTimeOffset.Now.AddDays(7), // Cookie expires in 7 days
-                HttpOnly = true, // Makes the cookie inaccessible to client-side script
+                HttpOnly = true, // Makes the cookie inaccessible to client-side java script
                 Secure = true, // Only send the cookie over HTTPS
                 SameSite = SameSiteMode.Lax // Controls when cookies are sent with cross-site requests
             };
@@ -59,9 +59,9 @@ namespace movie_booking.Controllers
         }
 
 
-        [HttpPost("Refresh")]
+        [HttpGet("Refresh")]
         public async Task<IActionResult> RefreshAndCreateAccessToken() {
-            HttpContext.Request.Cookies.TryGetValue("AuthRefreshToken", out this.RefreshToken);
+            HttpContext.Request.Cookies.TryGetValue("UserRefreshToken", out this.RefreshToken);
             var response = await this.AccountBL.RefreshAndCreateAccessToken(this.RefreshToken);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Message);
@@ -71,6 +71,11 @@ namespace movie_booking.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("UserOnly")]
+        public string UserOnly() {
+            return $"only user access end point";
+        }
 
         [Authorize]
         [HttpPost("UpdateUserDetails")]

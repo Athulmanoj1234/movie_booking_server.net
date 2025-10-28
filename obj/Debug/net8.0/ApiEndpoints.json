@@ -1,5 +1,67 @@
 [
   {
+    "ContainingType": "movie_booking.Controllers.AdminAuthController",
+    "Method": "AdminOnly",
+    "RelativePath": "api/AdminAuth/AdminOnly",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.AdminAuthController",
+    "Method": "AdminLogin",
+    "RelativePath": "api/AdminAuth/Login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Admin",
+        "Type": "movie_booking.Dtos.Request.AdminInfoRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.AdminAuthController",
+    "Method": "RefreshAndCreateAdminAccessToken",
+    "RelativePath": "api/AdminAuth/Refresh",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.AdminAuthController",
+    "Method": "AdminRegister",
+    "RelativePath": "api/AdminAuth/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Admin",
+        "Type": "movie_booking.Dtos.Request.AdminInfoRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.UserAuthController",
     "Method": "GetOrAddUserbyMobile",
     "RelativePath": "api/UserAuth/GetUserByMobileNumber",
@@ -14,6 +76,52 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.UserAuthController",
+    "Method": "RefreshAndCreateAccessToken",
+    "RelativePath": "api/UserAuth/Refresh",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.UserAuthController",
+    "Method": "UpdateUserDetails",
+    "RelativePath": "api/UserAuth/UpdateUserDetails",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "UserRequestDto",
+        "Type": "movie_booking.Dtos.Request.UserRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.UserAuthController",
+    "Method": "UserOnly",
+    "RelativePath": "api/UserAuth/UserOnly",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.String",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "movie_booking.Controllers.UserAuthController",

@@ -19,6 +19,7 @@ namespace movie_booking.Application
         private IConfiguration Congiguration;
         private ApplicationDbContext DbContext;
         public JwtService JwtService;
+        public PasswordHashService PasswordHashService;
         public string MobileNumberPrefix;
         public string MobileNumberWithoutPrefix;
         public string MobileNumber;
@@ -26,6 +27,7 @@ namespace movie_booking.Application
         public string AccessToken;
         public string RefreshToken;
         public bool isLoggedIn = false;
+        public bool isAdminLoggined = false;
         public Guid AdminId;
         public byte[] Salt;
         public string hashedAdminPassWord;
@@ -35,12 +37,12 @@ namespace movie_booking.Application
         public string AdminRefreshToken;
         //public SuccuessOrErrorResponseDto SuccessResponse;
 
-        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService)
+        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService, PasswordHashService passwordHashService)
         {
             this.Congiguration = configuration;
             this.DbContext = dbContext;
             this.JwtService = jwtService;
-
+            this.PasswordHashService = passwordHashService;
         }
 
         public async Task<SuccessOrErrorResponseDto<User>> GetOrAddUserbyMobileAsync(string mobileNumber)
@@ -316,7 +318,8 @@ namespace movie_booking.Application
                     //    prf: KeyDerivationPrf.HMACSHA256,  //prf tells Pbkdf2 that which hashing function needs to be used here we used for genrate hash
                     //    numBytesRequested: 256
                     //    ));
-                    this.hashedAdminPassWord = new PasswordHasher<Admin>().HashPassword(null, Admin.AdminPassword);
+                    this.hashedAdminPassWord = this.PasswordHashService.CreateHashedPassword(Admin.AdminPassword);
+                    //this.hashedAdminPassWord = new PasswordHasher<Admin>().HashPassword(null, Admin.AdminPassword);
 
                     var AdminEntity = new Admin()
                     {
@@ -377,7 +380,10 @@ namespace movie_booking.Application
                         Messege = $"admin info is not present in the db/failed to login",
                     };
                 }
-                if (new PasswordHasher<Admin>().VerifyHashedPassword(admin, admin.AdminPassword, this.EnteredPassword) == PasswordVerificationResult.Failed) {
+
+                this.isAdminLoggined = this.PasswordHashService.ValidatePassword(Admin.AdminPassword, admin.AdminPassword);
+                
+                if (!isAdminLoggined) {
                     return new SuccessOrErrorResponseDto<LoginResponseDto>()
                     {
                         StatusCode = 400,

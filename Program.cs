@@ -31,8 +31,7 @@ builder.Services.AddCors(options =>
               .AllowCredentials()
               .AllowAnyHeader() //allows any custom headers to be sent with request in frontend
               .AllowAnyMethod(); //allow any http methods 
-    }
-                )
+    })
 ); //reisters the cors policy named MyAllowSpecificOrigins
 
 builder.Services.AddAuthentication(options =>

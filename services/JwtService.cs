@@ -101,7 +101,7 @@ namespace movie_booking.services
                     issuer: Configuration["Jwt:Issuer"],
                     audience: Configuration["jwt:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(10),
+                    expires: DateTime.UtcNow.AddSeconds(10),
                     signingCredentials: signIn
                     );
                 var accessToken = new JwtSecurityTokenHandler().WriteToken(token);

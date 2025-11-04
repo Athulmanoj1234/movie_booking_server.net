@@ -37,6 +37,16 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.AdminAuthController",
+    "Method": "AdminLgout",
+    "RelativePath": "api/AdminAuth/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.AdminAuthController",
     "Method": "RefreshAndCreateAdminAccessToken",
     "RelativePath": "api/AdminAuth/Refresh",
     "HttpMethod": "GET",

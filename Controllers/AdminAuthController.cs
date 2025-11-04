@@ -13,6 +13,7 @@ namespace movie_booking.Controllers
     {
         public AccountBL AccountBL;
         public string AdminRefreshToken;
+        private HttpContext HttpContext;
         public AdminAuthController(AccountBL accountBL) { 
             this.AccountBL = accountBL;
         }
@@ -58,6 +59,19 @@ namespace movie_booking.Controllers
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Message);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Message);
+
+            return Ok(response);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> AdminLgout() {
+            Request.Cookies.TryGetValue("AdminRefreshToken", out this.AdminRefreshToken);
+            var response = await this.AccountBL.AdminLogout(this.AdminRefreshToken);
+
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
 
             return Ok(response);
         }

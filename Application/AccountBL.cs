@@ -10,6 +10,7 @@ using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.services;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
 
 
 namespace movie_booking.Application
@@ -35,14 +36,16 @@ namespace movie_booking.Application
         private string EnteredPassword;
         public string AdminAccessToken;
         public string AdminRefreshToken;
+        private readonly IHttpContextAccessor HttpContextAccessor;
         //public SuccuessOrErrorResponseDto SuccessResponse;
 
-        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService, PasswordHashService passwordHashService)
+        public AccountBL(IConfiguration configuration, ApplicationDbContext dbContext, JwtService jwtService, PasswordHashService passwordHashService, IHttpContextAccessor httpContextAccessor)
         {
             this.Congiguration = configuration;
             this.DbContext = dbContext;
             this.JwtService = jwtService;
             this.PasswordHashService = passwordHashService;
+            this.HttpContextAccessor = httpContextAccessor;
         }
 
         public async Task<SuccessOrErrorResponseDto<User>> GetOrAddUserbyMobileAsync(string mobileNumber)
@@ -469,6 +472,49 @@ namespace movie_booking.Application
                     StatusCode = 500,
                     IsSuccess = false,
                     Message = $"failed to create access token - internal server error",
+                };
+            }
+        }
+
+        public async Task<SuccessOrErrorResponseDto<Admin>> AdminLogout(string RefreshToken) {
+            if (string.IsNullOrEmpty(RefreshToken)) {
+                return new SuccessOrErrorResponseDto<Admin>()
+                { 
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Messege = $"failed to logout - refresh token is empty or null please send refresh token along with the cookies",
+                };
+            }
+            try
+            {
+                var admin = await DbContext.Admins.FirstOrDefaultAsync(a => a.AdminRefreshToken == RefreshToken);
+                bool IsAdminRefreshtokenValid = JwtService.ValidateAdminRefreshToken(admin, RefreshToken);
+                if (!IsAdminRefreshtokenValid) {
+                    return new SuccessOrErrorResponseDto<Admin>()
+                    {
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = "failed to logout - refresh token does not exists in the database/refresh token is not valid/admin is not in db",
+                    };
+                }
+                var AdminEntity = new Admin()
+                {
+                    AdminRefreshToken = null,
+                };
+                HttpContextAccessor.HttpContext.Response.Cookies.Delete("AdminRefreshToken");
+                return new SuccessOrErrorResponseDto<Admin>()
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = "logouted successfully",
+                };
+            }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<Admin>()
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
                 };
             }
         }

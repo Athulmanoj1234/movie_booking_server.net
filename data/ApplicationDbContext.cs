@@ -20,7 +20,7 @@ namespace movie_booking.data
             //movies-director
 
             modelBuilder.Entity<MovieInfoDirector>()
-                .HasKey(md => new { md.MovieInfoId, md.DirectorId });
+                .HasKey(md => new { md.MovieInfoId, md.DirectorId });   // "The combination of MovieInfoId and DirectorId is the primary key."  "Each (Movie, Director) pair must be unique in the table."
 
             modelBuilder.Entity<MovieInfoDirector>()
                 .HasOne(md => md.MovieInfo)

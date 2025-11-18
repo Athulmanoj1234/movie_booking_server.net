@@ -147,3 +147,4 @@ C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_b
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\ref\movie_booking.dll
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_booking.sourcelink.json
+C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\movie_booking.staticwebassets.runtime.json

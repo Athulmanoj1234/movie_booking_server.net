@@ -17,8 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<AccountBL>();
+builder.Services.AddScoped<MovieDetailBL>();
+
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordHashService>();
+builder.Services.AddScoped<MovieDetailsService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

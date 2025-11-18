@@ -72,6 +72,145 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "AddActorInfo",
+    "RelativePath": "api/MovieDetails/Add-Actor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ActorInfo",
+        "Type": "movie_booking.Dtos.Request.ActorInfoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "AddDirectorInfo",
+    "RelativePath": "api/MovieDetails/Add-Director",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "directorInfo",
+        "Type": "movie_booking.Dtos.Request.DirectorInfoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "AddMovieInfo",
+    "RelativePath": "api/MovieDetails/Add-MovieInfo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Genre",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Audiolanguage",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "SubtitleLanguage",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieDurationInfo.Hours",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieDurationInfo.Minutes",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieDurationInfo.Seconds",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "ImdbRating",
+        "Type": "System.Single",
+        "IsRequired": false
+      },
+      {
+        "Name": "AppRating",
+        "Type": "System.Single",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieDescription",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ClassificationAge",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieCover",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "MovieTrailer",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "DirectorName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "ActorName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "WriterName",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "AddWriterInfo",
+    "RelativePath": "api/MovieDetails/Add-Writer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "WriterInfo",
+        "Type": "movie_booking.Dtos.Request.WriterInfoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.UserAuthController",
     "Method": "GetOrAddUserbyMobile",
     "RelativePath": "api/UserAuth/GetUserByMobileNumber",

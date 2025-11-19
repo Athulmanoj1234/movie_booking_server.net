@@ -6,10 +6,16 @@ using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.services;
+using System.IO;
 using System.Reflection.Metadata.Ecma335;
 
 namespace movie_booking.Application
 {
+    public class ReponseSampleCountDto {
+        public int DirectorsCount { get; set; }
+        public int WritersCount { get; set; }
+        public int ActorsCount { get; set; }
+    };
     public class MovieDetailBL
     {
         private IConfiguration _configuration;
@@ -243,12 +249,12 @@ namespace movie_booking.Application
                     await this._dbContext.SaveChangesAsync();
                 }
 
-                movieInfo.DirectorInfo.Add(isDirectorWriterActorExists.Data.DirectorData);
-                //this._dbContext.MoviesInfoActors.Add(movieInfoActorEntity);
-                movieInfo.WriterInfo.Add(isDirectorWriterActorExists.Data.WriterData);
-                //this._dbContext.MoviesInfoWriters.Add(movieInfoWriterEntity);
-                movieInfo.ActorInfo.Add(isDirectorWriterActorExists.Data.ActorData);
-                await this._dbContext.SaveChangesAsync();
+                //movieInfo.DirectorInfo.Add(isDirectorWriterActorExists.Data.DirectorData);
+                ////this._dbContext.MoviesInfoActors.Add(movieInfoActorEntity);
+                //movieInfo.WriterInfo.Add(isDirectorWriterActorExists.Data.WriterData);
+                ////this._dbContext.MoviesInfoWriters.Add(movieInfoWriterEntity);
+                //movieInfo.ActorInfo.Add(isDirectorWriterActorExists.Data.ActorData);
+                //await this._dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<MovieInfo>
                 {
                     StatusCode = 200,
@@ -302,6 +308,100 @@ namespace movie_booking.Application
                 };
             };
         }
+
+
+        public async Task<SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>> AddDirectorWriterActorToMovieInfo(int MovieId, DirectorWriterActorUpdateDto DirectorWriterActorUpdateData) {
+            
+            if (DirectorWriterActorUpdateData is null
+                || DirectorWriterActorUpdateData.DirectorData.Count == 0
+                || DirectorWriterActorUpdateData.WriterData.Count == 0
+                || DirectorWriterActorUpdateData.ActorData.Count == 0) {
+
+                return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                {
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Messege = "please sent all the fields the Director/Writer/Actor Data is empty",
+                };
+            }
+
+            try
+            {
+                MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.Id == MovieId);
+                if (movieInfo is null)
+                {
+                    return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>()
+                    {
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = $"no movie info exits with the id : {MovieId}",
+                    };
+                }
+
+                foreach (DirectorInfo director in DirectorWriterActorUpdateData.DirectorData)
+                {
+                    if (director.DirectorName is null || director.Id == null)
+                    {
+                        return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                        {
+                            StatusCode = 400,
+                            IsSuccess = false,
+                            Messege = "Director name/id is empty here",
+                        };
+                    }
+                    DirectorInfo directorInfo = await this._dbContext.DirectorInfos.FirstOrDefaultAsync(di => di.Id == director.Id);
+                    movieInfo.DirectorInfo.Add(directorInfo);
+                }
+
+                foreach (WriterInfo writer in DirectorWriterActorUpdateData.WriterData)
+                {
+                    if (writer.WriterName is null || writer.Id == null)
+                    {
+                        return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                        {
+                            StatusCode = 400,
+                            IsSuccess = false,
+                            Messege = "writer name/id is empty here",
+                        };
+                    }
+                    WriterInfo writerInfo = await this._dbContext.WriterInfos.FirstOrDefaultAsync(wi => wi.Id == writer.Id);
+                    movieInfo.WriterInfo.Add(writerInfo);
+                }
+
+                foreach (ActorInfo actor in DirectorWriterActorUpdateData.ActorData)
+                {
+                    if (actor is null || actor.Id == null)
+                    {
+                        return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                        {
+                            StatusCode = 400,
+                            IsSuccess = false,
+                            Messege = "Director name/id is empty here",
+                        };
+                    }
+                    ActorInfo actorInfo = await this._dbContext.ActorInfos.FirstOrDefaultAsync(ai => ai.Id == actor.Id);
+                    movieInfo.ActorInfo.Add(actorInfo);
+                }
+
+                await this._dbContext.SaveChangesAsync();
+
+                return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto> { 
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = "successfully added director/writer/actor info to movie info "
+                };
+
+            }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+        }
+
     }  
 
 }

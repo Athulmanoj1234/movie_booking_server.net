@@ -68,7 +68,6 @@ namespace movie_booking.Controllers
             Request.Cookies.TryGetValue("AdminRefreshToken", out this.AdminRefreshToken);
             var response = await this.AccountBL.AdminLogout(this.AdminRefreshToken);
 
-
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
                 return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);

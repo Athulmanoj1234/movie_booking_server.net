@@ -81,5 +81,15 @@ namespace movie_booking.Controllers
             return Ok(response);
         }
 
+        [HttpPatch("AddDirectorWriterActorToMovieInfo/{id}")]
+        public async Task<IActionResult> AddDirectorWriterActorToMovieInfo(int id, DirectorWriterActorUpdateDto DirectorWriterActorUpdateData) {
+            SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto> response = await this._movieDetailBL.AddDirectorWriterActorToMovieInfo(id, DirectorWriterActorUpdateData);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
     }
 }

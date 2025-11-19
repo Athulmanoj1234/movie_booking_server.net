@@ -212,6 +212,27 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "AddDirectorWriterActorToMovieInfo",
+    "RelativePath": "api/MovieDetails/AddDirectorWriterActorToMovieInfo/{id}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "DirectorWriterActorUpdateData",
+        "Type": "movie_booking.Dtos.Request.DirectorWriterActorUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
     "Method": "GetMovieInfo",
     "RelativePath": "api/MovieDetails/MovieInfo/{id}",
     "HttpMethod": "GET",

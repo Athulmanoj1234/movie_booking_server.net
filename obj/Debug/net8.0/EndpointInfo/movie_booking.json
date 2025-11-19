@@ -380,6 +380,48 @@
         }
       }
     },
+    "/api/MovieDetails/AddDirectorWriterActorToMovieInfo/{id}": {
+      "patch": {
+        "tags": [
+          "MovieDetails"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectorWriterActorUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectorWriterActorUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectorWriterActorUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserAuth/GetUserByMobileNumber": {
       "get": {
         "tags": [
@@ -543,6 +585,20 @@
   },
   "components": {
     "schemas": {
+      "ActorInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actorName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ActorInfoDto": {
         "type": "object",
         "properties": {
@@ -567,11 +623,52 @@
         },
         "additionalProperties": false
       },
+      "DirectorInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "directorName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DirectorInfoDto": {
         "type": "object",
         "properties": {
           "directName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DirectorWriterActorUpdateDto": {
+        "type": "object",
+        "properties": {
+          "directorData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DirectorInfo"
+            },
+            "nullable": true
+          },
+          "writerData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WriterInfo"
+            },
+            "nullable": true
+          },
+          "actorData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActorInfo"
+            },
             "nullable": true
           }
         },
@@ -625,6 +722,20 @@
             "readOnly": true
           },
           "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WriterInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "writerName": {
             "type": "string",
             "nullable": true
           }

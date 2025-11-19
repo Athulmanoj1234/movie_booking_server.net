@@ -2,6 +2,6 @@
 {
     public class DirectorInfoDto
     {
-        public string directName { get; set; }
+        public  string directName { get; set; }
     }
 }

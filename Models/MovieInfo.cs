@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace movie_booking.Models
 {
@@ -17,7 +18,15 @@ namespace movie_booking.Models
         public string ClassificationAge { get; set; }
         public string MovieCover { get; set; }
         public string? MovieTrailer { get; set; }
+
+        public ICollection<DirectorInfo> DirectorInfo { get; set; } = new List<DirectorInfo>();
+
+        public ICollection<WriterInfo> WriterInfo { get; set; } = new List<WriterInfo>();
+        public ICollection<ActorInfo> ActorInfo { get; set; } = new List<ActorInfo>();
+
+        //[JsonIgnore]
         public ICollection<MovieInfoDirector> MovieInfoDirectors { get; set; } = new List<MovieInfoDirector>();
+
         public ICollection<MovieInfoActor> MovieInfoActors { get; set; } = new List<MovieInfoActor>();
         public ICollection<MovieInfoWriter> MovieInfoWriters { get; set; } = new List<MovieInfoWriter>();
     }

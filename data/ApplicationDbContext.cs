@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using movie_booking.Models;
 
 namespace movie_booking.data
@@ -64,7 +65,26 @@ namespace movie_booking.data
                 .HasOne(ma => ma.ActorInfo)
                 .WithMany(ai => ai.MoviesInfoActors)
                 .HasForeignKey(ma => ma.ActorId);
+
+
+            //individual movie-director, actor, writer relationships
+            modelBuilder.Entity<MovieInfo>()
+                .HasMany(mi => mi.DirectorInfo)
+                .WithMany(di => di.MovieInfo);
+
+            modelBuilder.Entity<MovieInfo>()
+                .HasMany(mi => mi.WriterInfo)
+                .WithMany(wi => wi.MovieInfo);
+
+            modelBuilder.Entity<MovieInfo>()
+                .HasMany(mi => mi.ActorInfo)
+                .WithMany(ai => ai.MovieInfo);
+
         }
+
+
+
+
 
     }
 }

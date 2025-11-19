@@ -6,6 +6,7 @@ using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.services;
+using System.Reflection.Metadata.Ecma335;
 
 namespace movie_booking.Application
 {
@@ -147,29 +148,68 @@ namespace movie_booking.Application
         //|| !MovieInfo.MovieDurationInfo.Seconds.HasValue || MovieInfo.AppRating is null || !MovieInfo.AppRating.HasValue || MovieInfo.ImdbRating is null
         //|| !MovieInfo.ImdbRating.HasValue
 
-         //|| MovieInfo.MovieTrailer is null || MovieInfo.MovieTrailer.Length == 0
+        //|| MovieInfo.MovieTrailer is null || MovieInfo.MovieTrailer.Length == 0
 
         public async Task<SuccessOrErrorResponseDto<MovieInfo>> AddMovieInfo(MovieInfoDto MovieInfo)
         {
 
-            if (MovieInfo is null || string.IsNullOrEmpty(MovieInfo.Genre) ||
-                string.IsNullOrEmpty(MovieInfo.MovieName) || string.IsNullOrEmpty(MovieInfo.WriterName)
-                || string.IsNullOrEmpty(MovieInfo.ActorName) || string.IsNullOrEmpty(MovieInfo.DirectorName)
-                || string.IsNullOrEmpty(MovieInfo.MovieDescription) || string.IsNullOrEmpty(MovieInfo.Audiolanguage)
-                || string.IsNullOrEmpty(MovieInfo.ClassificationAge) || string.IsNullOrEmpty(MovieInfo.SubtitleLanguage)
-                || MovieInfo.MovieDurationInfo is null || MovieInfo.MovieCover is null || MovieInfo.MovieCover.Length == 0)
-            {
-
-                return new SuccessOrErrorResponseDto<MovieInfo>
-                {
-                    StatusCode = 400,
-                    IsSuccess = false,
-                    Messege = "one or more feilds is empty / please pass all data",
-                };
-            }
-
             try
             {
+
+                MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.MovieName == MovieInfo.MovieName);
+
+                if (movieInfo is null || string.IsNullOrEmpty(movieInfo.MovieName))
+                {
+
+                    if (MovieInfo is null || string.IsNullOrEmpty(MovieInfo.Genre) || string.IsNullOrEmpty(MovieInfo.MovieName)
+                        || string.IsNullOrEmpty(MovieInfo.WriterName) || string.IsNullOrEmpty(MovieInfo.ActorName)
+                        || string.IsNullOrEmpty(MovieInfo.DirectorName) || string.IsNullOrEmpty(MovieInfo.MovieDescription)
+                        || string.IsNullOrEmpty(MovieInfo.Audiolanguage) || string.IsNullOrEmpty(MovieInfo.ClassificationAge) || string.IsNullOrEmpty(MovieInfo.SubtitleLanguage)|| MovieInfo.MovieDurationInfo is null || MovieInfo.MovieCover is null || MovieInfo.MovieCover.Length == 0)
+                    {
+
+                        return new SuccessOrErrorResponseDto<MovieInfo>
+                        {
+                            StatusCode = 400,
+                            IsSuccess = false,
+                            Messege = "one or more feilds is empty / please pass all data",
+                        };
+                    }
+
+                    MovieInfo MovieInfoAddEntity = new MovieInfo
+                    {
+                        Genre = MovieInfo.Genre,
+                        MovieName = MovieInfo.MovieName,
+                        MovieDescription = MovieInfo.MovieDescription,
+                        MovieCover = MovieInfo.MovieCover.FileName,
+                        //MovieTrailer = MovieInfo.MovieTrailer.FileName,
+                        MovieDuration = new TimeSpan(MovieInfo.MovieDurationInfo.Hours, MovieInfo.MovieDurationInfo.Minutes, MovieInfo.MovieDurationInfo.Seconds),
+                        ImdbRating = MovieInfo.ImdbRating,
+                        AppRating = MovieInfo.AppRating,
+                        ClassificationAge = MovieInfo.ClassificationAge,
+                        Audiolanguage = MovieInfo.Audiolanguage,
+                        SubtitleLanguage = MovieInfo.SubtitleLanguage,
+                    };
+
+                    this._dbContext.MovieInfos.Add(MovieInfoAddEntity);
+                    await this._dbContext.SaveChangesAsync();
+                }
+
+                //if (MovieInfo is null || string.IsNullOrEmpty(MovieInfo.Genre) ||
+                //string.IsNullOrEmpty(MovieInfo.MovieName) || string.IsNullOrEmpty(MovieInfo.WriterName)
+                //|| string.IsNullOrEmpty(MovieInfo.ActorName) || string.IsNullOrEmpty(MovieInfo.DirectorName)
+                //|| string.IsNullOrEmpty(MovieInfo.MovieDescription) || string.IsNullOrEmpty(MovieInfo.Audiolanguage)
+                //|| string.IsNullOrEmpty(MovieInfo.ClassificationAge) || string.IsNullOrEmpty(MovieInfo.SubtitleLanguage)
+                //|| MovieInfo.MovieDurationInfo is null || MovieInfo.MovieCover is null || MovieInfo.MovieCover.Length == 0)
+                //{
+
+                //    return new SuccessOrErrorResponseDto<MovieInfo>
+                //    {
+                //        StatusCode = 400,
+                //        IsSuccess = false,
+                //        Messege = "one or more feilds is empty / please pass all data",
+                //    };
+                //}
+
                 // --- for uploading movie cover images ---
                 string uploadPathForMovieCovers = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "MovieCovers");
                 if (!Directory.Exists(uploadPathForMovieCovers))
@@ -210,30 +250,15 @@ namespace movie_booking.Application
                     };
                 }
 
-                var MovieInfoAddEntity = new MovieInfo
-                {
-                    Genre = MovieInfo.Genre,
-                    MovieName = MovieInfo.MovieName,
-                    MovieDescription = MovieInfo.MovieDescription,
-                    MovieCover = MovieInfo.MovieCover.FileName,
-                    //MovieTrailer = MovieInfo.MovieTrailer.FileName,
-                    MovieDuration = new TimeSpan(MovieInfo.MovieDurationInfo.Hours, MovieInfo.MovieDurationInfo.Minutes, MovieInfo.MovieDurationInfo.Seconds),
-                    ImdbRating = MovieInfo.ImdbRating,
-                    AppRating = MovieInfo.AppRating,
-                    ClassificationAge = MovieInfo.ClassificationAge,
-                    Audiolanguage = MovieInfo.Audiolanguage,
-                    SubtitleLanguage = MovieInfo.SubtitleLanguage,
-                };
 
-                this._dbContext.MovieInfos.Add(MovieInfoAddEntity);
-                await this._dbContext.SaveChangesAsync();
 
 
                 // checking whether the data added correctly and fetching the movie data
 
                 SuccessOrErrorResponseDto<MovieRelationalData> isDirectorWriterActorExists = await this._movieDetailsService.DirectorActorWriterExists(MovieInfo.DirectorName, MovieInfo.ActorName, MovieInfo.WriterName);
 
-                if (!isDirectorWriterActorExists.IsSuccess) {
+                if (!isDirectorWriterActorExists.IsSuccess)
+                {
                     return new SuccessOrErrorResponseDto<MovieInfo>
                     {
                         StatusCode = 400,
@@ -242,27 +267,33 @@ namespace movie_booking.Application
                     };
                 }
 
-                MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.MovieName == MovieInfo.MovieName);
+                //MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.MovieName == MovieInfo.MovieName);
 
-                MovieInfoDirector movieInfoDirectorEntity = new MovieInfoDirector()
-                {
-                    MovieInfoId = movieInfo.Id,
-                    DirectorId = isDirectorWriterActorExists.Data.DirectorData.Id,
-                };
+                //if (movieInfo is null || string.IsNullOrEmpty(movieInfo.MovieName)) {
+                //    MovieInfo MovieInfoAddEntity = new MovieInfo
+                //    {
+                //        Genre = MovieInfo.Genre,
+                //        MovieName = MovieInfo.MovieName,
+                //        MovieDescription = MovieInfo.MovieDescription,
+                //        MovieCover = MovieInfo.MovieCover.FileName,
+                //        //MovieTrailer = MovieInfo.MovieTrailer.FileName,
+                //        MovieDuration = new TimeSpan(MovieInfo.MovieDurationInfo.Hours, MovieInfo.MovieDurationInfo.Minutes, MovieInfo.MovieDurationInfo.Seconds),
+                //        ImdbRating = MovieInfo.ImdbRating,
+                //        AppRating = MovieInfo.AppRating,
+                //        ClassificationAge = MovieInfo.ClassificationAge,
+                //        Audiolanguage = MovieInfo.Audiolanguage,
+                //        SubtitleLanguage = MovieInfo.SubtitleLanguage,
+                //    };
 
-                MovieInfoActor movieInfoActorEntity = new MovieInfoActor() {
-                    MovieInfoId = movieInfo.Id,
-                    ActorId = isDirectorWriterActorExists.Data.ActorData.Id,
-                };
+                //    this._dbContext.MovieInfos.Add(MovieInfoAddEntity);
+                //    await this._dbContext.SaveChangesAsync();
+                //}
 
-                MovieInfoWriter movieInfoWriterEntity = new MovieInfoWriter() {
-                    MovieInfoId = movieInfo.Id,
-                    WriterId = isDirectorWriterActorExists.Data.WriterData.Id,
-                };
-
-                this._dbContext.MoviesInfoDirectors.Add(movieInfoDirectorEntity);
-                this._dbContext.MoviesInfoActors.Add(movieInfoActorEntity);
-                this._dbContext.MoviesInfoWriters.Add(movieInfoWriterEntity);
+                movieInfo.DirectorInfo.Add(isDirectorWriterActorExists.Data.DirectorData);
+                //this._dbContext.MoviesInfoActors.Add(movieInfoActorEntity);
+                movieInfo.WriterInfo.Add(isDirectorWriterActorExists.Data.WriterData);
+                //this._dbContext.MoviesInfoWriters.Add(movieInfoWriterEntity);
+                movieInfo.ActorInfo.Add(isDirectorWriterActorExists.Data.ActorData);
                 await this._dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<MovieInfo>
                 {
@@ -271,7 +302,8 @@ namespace movie_booking.Application
                     Messege = $"data and many to many relationship added",
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new SuccessOrErrorResponseDto<MovieInfo>
                 {
                     StatusCode = 500,
@@ -280,6 +312,60 @@ namespace movie_booking.Application
                 };
             }
 
+        }
+
+        public async Task<SuccessOrErrorResponseDto<MovieInfo>> GetMovieDetails(int id)
+        {
+            try
+            {
+                //MovieInfo movieDetails = await this._dbContext.MovieInfos
+                //    .Include(mi => mi.MovieInfoDirectors)
+                //    .Include(mi => mi.MovieInfoWriters)
+                //    .Include(mi => mi.MovieInfoActors)
+                //    .FirstOrDefaultAsync(mi => mi.Id == id);
+
+                MovieInfo movieDetails = await this._dbContext.MovieInfos
+                    .Include(mi => mi.DirectorInfo)
+                    .Include(mi => mi.WriterInfo)
+                    .Include(mi => mi.ActorInfo)
+                    .FirstOrDefaultAsync(mi => mi.Id == id);
+
+                //MovieInfoDirector movieDetails = await this._dbContext.MoviesInfoDirectors
+                //    .Include(mid => mid.MovieInfo)
+                //    .Include(mid => mid.DirectorInfo)
+                //    .FirstOrDefaultAsync(mid => mid.MovieInfoId == id);
+
+                // || movieDetails.MovieInfoDirectors.Count == 0
+                // || movieDetails.MovieInfoWriters.Count == 0
+                // || movieDetails.MovieInfoActors.Count == 0
+                if (movieDetails is null)
+                {
+
+                    return new SuccessOrErrorResponseDto<MovieInfo>
+                    {
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = $"movie info obj is null or not exists in db/movieinfo directors/movieinfo writers/movieinfo actors is null or empty",
+                    };
+                }
+
+                return new SuccessOrErrorResponseDto<MovieInfo>
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Data = movieDetails,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new SuccessOrErrorResponseDto<MovieInfo>
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+            ;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using movie_booking.Application;
 using movie_booking.Dtos.Request;
@@ -59,6 +60,19 @@ namespace movie_booking.Controllers
         public async Task<IActionResult> AddMovieInfo(MovieInfoDto MovieInfo)
         {
             SuccessOrErrorResponseDto<MovieInfo> response = await this._movieDetailBL.AddMovieInfo(MovieInfo);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
+        [HttpGet("MovieInfo/{id}")]
+        //[Route("{id: int}")]
+        public async Task<IActionResult> GetMovieInfo(int id) {
+
+            SuccessOrErrorResponseDto<MovieInfo> response = await this._movieDetailBL.GetMovieDetails(id);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)

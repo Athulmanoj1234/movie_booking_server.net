@@ -148,12 +148,12 @@
       },
       {
         "Name": "ImdbRating",
-        "Type": "System.Single",
+        "Type": "System.Nullable\u00601[[System.Single, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
         "Name": "AppRating",
-        "Type": "System.Single",
+        "Type": "System.Nullable\u00601[[System.Single, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {
@@ -205,6 +205,22 @@
       {
         "Name": "WriterInfo",
         "Type": "movie_booking.Dtos.Request.WriterInfoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "GetMovieInfo",
+    "RelativePath": "api/MovieDetails/MovieInfo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

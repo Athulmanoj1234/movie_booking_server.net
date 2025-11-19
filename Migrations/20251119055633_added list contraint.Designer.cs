@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using movie_booking.data;
 
@@ -11,9 +12,11 @@ using movie_booking.data;
 namespace movie_booking.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251119055633_added list contraint")]
+    partial class addedlistcontraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace movie_booking.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ActorInfoMovieInfo", b =>
-                {
-                    b.Property<int>("ActorInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieInfoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActorInfoId", "MovieInfoId");
-
-                    b.HasIndex("MovieInfoId");
-
-                    b.ToTable("ActorInfoMovieInfo");
-                });
 
             modelBuilder.Entity("DirectorInfoMovieInfo", b =>
                 {
@@ -50,21 +38,6 @@ namespace movie_booking.Migrations
                     b.HasIndex("MovieInfoId");
 
                     b.ToTable("DirectorInfoMovieInfo");
-                });
-
-            modelBuilder.Entity("MovieInfoWriterInfo", b =>
-                {
-                    b.Property<int>("MovieInfoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WriterInfoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovieInfoId", "WriterInfoId");
-
-                    b.HasIndex("WriterInfoId");
-
-                    b.ToTable("MovieInfoWriterInfo");
                 });
 
             modelBuilder.Entity("movie_booking.Models.ActorInfo", b =>
@@ -277,21 +250,6 @@ namespace movie_booking.Migrations
                     b.ToTable("WriterInfos");
                 });
 
-            modelBuilder.Entity("ActorInfoMovieInfo", b =>
-                {
-                    b.HasOne("movie_booking.Models.ActorInfo", null)
-                        .WithMany()
-                        .HasForeignKey("ActorInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("movie_booking.Models.MovieInfo", null)
-                        .WithMany()
-                        .HasForeignKey("MovieInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("DirectorInfoMovieInfo", b =>
                 {
                     b.HasOne("movie_booking.Models.DirectorInfo", null)
@@ -303,21 +261,6 @@ namespace movie_booking.Migrations
                     b.HasOne("movie_booking.Models.MovieInfo", null)
                         .WithMany()
                         .HasForeignKey("MovieInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MovieInfoWriterInfo", b =>
-                {
-                    b.HasOne("movie_booking.Models.MovieInfo", null)
-                        .WithMany()
-                        .HasForeignKey("MovieInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("movie_booking.Models.WriterInfo", null)
-                        .WithMany()
-                        .HasForeignKey("WriterInfoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

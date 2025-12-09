@@ -1,1 +1,3 @@
+wwwroot\uploads\MovieCovers\eko-20251014220917-23930.jpg
 wwwroot\uploads\MovieCovers\Oppenheimer_(film) poster.jpg
+wwwroot\uploads\MovieCovers\avatar3cover.jpg

@@ -159,10 +159,12 @@ namespace movie_booking.Application
         public async Task<SuccessOrErrorResponseDto<MovieInfo>> AddMovieInfo(MovieInfoDto MovieInfo)
         {
 
-            if (MovieInfo is null || string.IsNullOrEmpty(MovieInfo.Genre) ||
-                string.IsNullOrEmpty(MovieInfo.MovieName) || string.IsNullOrEmpty(MovieInfo.WriterName)
-                || string.IsNullOrEmpty(MovieInfo.ActorName) || string.IsNullOrEmpty(MovieInfo.DirectorName)
-                || string.IsNullOrEmpty(MovieInfo.MovieDescription) || string.IsNullOrEmpty(MovieInfo.Audiolanguage)
+            try
+            {
+                if (MovieInfo is null || string.IsNullOrEmpty(MovieInfo.Genre) ||
+                string.IsNullOrEmpty(MovieInfo.MovieName)
+                || string.IsNullOrEmpty(MovieInfo.MovieDescription)
+                || string.IsNullOrEmpty(MovieInfo.Audiolanguage)
                 || string.IsNullOrEmpty(MovieInfo.ClassificationAge) || string.IsNullOrEmpty(MovieInfo.SubtitleLanguage)
                 || MovieInfo.MovieDurationInfo is null || MovieInfo.MovieCover is null || MovieInfo.MovieCover.Length == 0)
             {
@@ -175,8 +177,6 @@ namespace movie_booking.Application
                 };
             }
 
-            try
-            {
                 // --- for uploading movie cover images ---
                 string uploadPathForMovieCovers = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "MovieCovers");
                 if (!Directory.Exists(uploadPathForMovieCovers))
@@ -216,16 +216,16 @@ namespace movie_booking.Application
                 }
 
                 // checking whether the data added correctly and fetching the movie data
-                SuccessOrErrorResponseDto<MovieRelationalData> isDirectorWriterActorExists = await this._movieDetailsService.DirectorActorWriterExists(MovieInfo.DirectorName, MovieInfo.ActorName, MovieInfo.WriterName);
+                //SuccessOrErrorResponseDto<MovieRelationalData> isDirectorWriterActorExists = await this._movieDetailsService.DirectorActorWriterExists(MovieInfo.DirectorName, MovieInfo.ActorName, MovieInfo.WriterName);
 
-                if (!isDirectorWriterActorExists.IsSuccess) {
-                    return new SuccessOrErrorResponseDto<MovieInfo>
-                    {
-                        StatusCode = 400,
-                        IsSuccess = false,
-                        Messege = $"{isDirectorWriterActorExists.Messege} and data added successfully to movie info table",
-                    };
-                }
+                //if (!isDirectorWriterActorExists.IsSuccess) {
+                //    return new SuccessOrErrorResponseDto<MovieInfo>
+                //    {
+                //        StatusCode = 400,
+                //        IsSuccess = false,
+                //        Messege = $"{isDirectorWriterActorExists.Messege} and data added successfully to movie info table",
+                //    };
+                //}
 
                 MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.MovieName == MovieInfo.MovieName);
 
@@ -243,10 +243,20 @@ namespace movie_booking.Application
                         ClassificationAge = MovieInfo.ClassificationAge,
                         Audiolanguage = MovieInfo.Audiolanguage,
                         SubtitleLanguage = MovieInfo.SubtitleLanguage,
+                        IsBookingStarted = MovieInfo.IsBookingStarted,
+                        IsMovieCommingSoon = MovieInfo.IsMovieCommingSoon,
+                        IsMovieCurrentlyRunning = MovieInfo.IsMovieCurrentlyRunning,
                     };
 
                     this._dbContext.MovieInfos.Add(MovieInfoAddEntity);
                     await this._dbContext.SaveChangesAsync();
+
+                    return new SuccessOrErrorResponseDto<MovieInfo>
+                    {
+                        StatusCode = 200,
+                        IsSuccess = true,
+                        Messege = $"data and many to many relationship added",
+                    };
                 }
 
                 //movieInfo.DirectorInfo.Add(isDirectorWriterActorExists.Data.DirectorData);
@@ -257,9 +267,9 @@ namespace movie_booking.Application
                 //await this._dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<MovieInfo>
                 {
-                    StatusCode = 200,
-                    IsSuccess = true,
-                    Messege = $"data and many to many relationship added",
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Messege = $"movie with this name already exists",
                 };
             }
             catch (Exception ex) {

@@ -57,7 +57,7 @@ namespace movie_booking.Controllers
         }
 
         [HttpPost("Add-MovieInfo")]
-        public async Task<IActionResult> AddMovieInfo(MovieInfoDto MovieInfo)
+        public async Task<IActionResult> AddMovieInfo([FromForm]MovieInfoDto MovieInfo)
         {
             SuccessOrErrorResponseDto<MovieInfo> response = await this._movieDetailBL.AddMovieInfo(MovieInfo);
 

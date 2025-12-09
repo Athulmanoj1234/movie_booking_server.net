@@ -16,5 +16,8 @@
         public string? DirectorName { get; set; }
         public string? ActorName { get; set; }
         public string? WriterName { get; set; }
+        public bool IsMovieCommingSoon { get; set; }
+        public bool IsMovieCurrentlyRunning { get; set; }
+        public bool IsBookingStarted { get; set; }
     }
 }

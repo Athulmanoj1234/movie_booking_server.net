@@ -218,117 +218,50 @@
         "tags": [
           "MovieDetails"
         ],
-        "parameters": [
-          {
-            "name": "Genre",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "MovieName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Audiolanguage",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SubtitleLanguage",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "MovieDurationInfo.Hours",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "MovieDurationInfo.Minutes",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "MovieDurationInfo.Seconds",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ImdbRating",
-            "in": "query",
-            "schema": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          {
-            "name": "AppRating",
-            "in": "query",
-            "schema": {
-              "type": "number",
-              "format": "float"
-            }
-          },
-          {
-            "name": "MovieDescription",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "ClassificationAge",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "DirectorName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "ActorName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "WriterName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
+                  "Genre": {
+                    "type": "string"
+                  },
+                  "MovieName": {
+                    "type": "string"
+                  },
+                  "Audiolanguage": {
+                    "type": "string"
+                  },
+                  "SubtitleLanguage": {
+                    "type": "string"
+                  },
+                  "MovieDurationInfo.Hours": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "MovieDurationInfo.Minutes": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "MovieDurationInfo.Seconds": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "ImdbRating": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "AppRating": {
+                    "type": "number",
+                    "format": "float"
+                  },
+                  "MovieDescription": {
+                    "type": "string"
+                  },
+                  "ClassificationAge": {
+                    "type": "string"
+                  },
                   "MovieCover": {
                     "type": "string",
                     "format": "binary"
@@ -336,14 +269,83 @@
                   "MovieTrailer": {
                     "type": "string",
                     "format": "binary"
+                  },
+                  "DirectorName": {
+                    "type": "string"
+                  },
+                  "ActorName": {
+                    "type": "string"
+                  },
+                  "WriterName": {
+                    "type": "string"
+                  },
+                  "IsMovieCommingSoon": {
+                    "type": "boolean"
+                  },
+                  "IsMovieCurrentlyRunning": {
+                    "type": "boolean"
+                  },
+                  "IsBookingStarted": {
+                    "type": "boolean"
                   }
                 }
               },
               "encoding": {
+                "Genre": {
+                  "style": "form"
+                },
+                "MovieName": {
+                  "style": "form"
+                },
+                "Audiolanguage": {
+                  "style": "form"
+                },
+                "SubtitleLanguage": {
+                  "style": "form"
+                },
+                "MovieDurationInfo.Hours": {
+                  "style": "form"
+                },
+                "MovieDurationInfo.Minutes": {
+                  "style": "form"
+                },
+                "MovieDurationInfo.Seconds": {
+                  "style": "form"
+                },
+                "ImdbRating": {
+                  "style": "form"
+                },
+                "AppRating": {
+                  "style": "form"
+                },
+                "MovieDescription": {
+                  "style": "form"
+                },
+                "ClassificationAge": {
+                  "style": "form"
+                },
                 "MovieCover": {
                   "style": "form"
                 },
                 "MovieTrailer": {
+                  "style": "form"
+                },
+                "DirectorName": {
+                  "style": "form"
+                },
+                "ActorName": {
+                  "style": "form"
+                },
+                "WriterName": {
+                  "style": "form"
+                },
+                "IsMovieCommingSoon": {
+                  "style": "form"
+                },
+                "IsMovieCurrentlyRunning": {
+                  "style": "form"
+                },
+                "IsBookingStarted": {
                   "style": "form"
                 }
               }

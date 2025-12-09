@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using movie_booking.Models.Ttheatre;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace movie_booking.Models
@@ -18,6 +19,9 @@ namespace movie_booking.Models
         public string ClassificationAge { get; set; }
         public string MovieCover { get; set; }
         public string? MovieTrailer { get; set; }
+        public bool IsMovieCommingSoon { get; set; }
+        public bool IsMovieCurrentlyRunning { get; set; }
+        public bool IsBookingStarted { get; set; }
 
         public ICollection<DirectorInfo> DirectorInfo { get; set; } = new List<DirectorInfo>();
 
@@ -29,5 +33,6 @@ namespace movie_booking.Models
 
         public ICollection<MovieInfoActor> MovieInfoActors { get; set; } = new List<MovieInfoActor>();
         public ICollection<MovieInfoWriter> MovieInfoWriters { get; set; } = new List<MovieInfoWriter>();
+        public ICollection<ShowsList> MovieShowList { get; set; } = new List<ShowsList>();
     }
 }

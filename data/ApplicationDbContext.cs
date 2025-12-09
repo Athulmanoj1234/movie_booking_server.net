@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using movie_booking.Models;
+using movie_booking.Models.Ttheatre;
 
 namespace movie_booking.data
 {
@@ -15,6 +16,11 @@ namespace movie_booking.data
         public DbSet<MovieInfoActor> MoviesInfoActors { get; set; }
         public DbSet<WriterInfo> WriterInfos { get; set; }
         public DbSet<MovieInfoWriter> MoviesInfoWriters { get; set; }
+        public DbSet<TheatreInfo> TheatreInfos { get; set; }
+        public DbSet<Screen> Screens { get; set; }
+        public DbSet<TheatreLocation> TheatreLocations { get; set; }
+        public DbSet<TheatreSeat> TheatreSeats { get; set; }
+        public DbSet<ShowsList> showsLists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,6 +85,27 @@ namespace movie_booking.data
             modelBuilder.Entity<MovieInfo>()
                 .HasMany(mi => mi.ActorInfo)
                 .WithMany(ai => ai.MovieInfo);
+
+            // for theatres
+            modelBuilder.Entity<TheatreInfo>()
+                .HasMany(ti => ti.Screen)
+                .WithOne(s => s.TheatreInfo);
+
+            modelBuilder.Entity<TheatreLocation>()
+                .HasOne(tl => tl.TheatreInfo)
+                .WithOne(ti => ti.TheatreLocation);
+
+            modelBuilder.Entity<Screen>()
+                .HasMany(s => s.TheatreSeats)
+                .WithOne(ts => ts.Screen);
+
+            modelBuilder.Entity<ShowsList>()
+                .HasOne(sl => sl.Screen)
+                .WithMany(s => s.ShowsLists);
+
+            modelBuilder.Entity<TheatreSeat>()
+                .HasOne(ts => ts.Screen)
+                .WithMany(s => s.TheatreSeats);
 
         }
 

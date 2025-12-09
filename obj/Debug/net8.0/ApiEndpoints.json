@@ -190,6 +190,21 @@
         "Name": "WriterName",
         "Type": "System.String",
         "IsRequired": false
+      },
+      {
+        "Name": "IsMovieCommingSoon",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "IsMovieCurrentlyRunning",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "IsBookingStarted",
+        "Type": "System.Boolean",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

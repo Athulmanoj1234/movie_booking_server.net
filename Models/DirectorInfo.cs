@@ -7,7 +7,7 @@ namespace movie_booking.Models
     {
         [Key]
         public int Id { get; set; }
-        public string DirectorName { get; set; }
+        public string? DirectorName { get; set; }
 
         [JsonIgnore]
         public ICollection<MovieInfo> MovieInfo { get; set; } = new List<MovieInfo>();

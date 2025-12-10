@@ -2,7 +2,7 @@
 {
     public class TheatreLocation
     {
-        public int LocationId { get; set; }
+        public int Id { get; set; }
         public string City { get; set; }
         public string State { get; set; }
         public string CountryName { get; set; }

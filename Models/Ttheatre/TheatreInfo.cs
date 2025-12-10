@@ -2,7 +2,7 @@
 {
     public class TheatreInfo
     {
-        public int TheatreId { get; set; }
+        public int Id { get; set; }
         public string TheatreTitle { get; set; }
         public int? TheatreLocationId { get; set; }
         public TheatreLocation TheatreLocation { get; set; } = null!;

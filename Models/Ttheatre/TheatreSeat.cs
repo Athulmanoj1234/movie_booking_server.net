@@ -2,7 +2,7 @@
 {
     public class TheatreSeat
     {
-        public int SeatId { get; set; }
+        public int Id { get; set; }
         public string RowValue { get; set; } // will be like A, B, C or 1, 2, 3
         public string SeatNumber { get; set; } // will be like A1, A2, B1, B2
         public string SeatType { get; set; } //  will be like (standarad, gold, plattinum)

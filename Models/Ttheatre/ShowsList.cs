@@ -2,7 +2,7 @@
 {
     public class ShowsList
     {
-        public int ShowId { get; set; }
+        public int Id { get; set; }
         public DateOnly ShowDate { get; set; }
         public TimeSpan ShowTime { get; set; }
         public int? Screenid { get; set; }

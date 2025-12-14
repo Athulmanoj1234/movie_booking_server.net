@@ -19,6 +19,7 @@ namespace movie_booking.data
         public DbSet<TheatreInfo> TheatreInfos { get; set; }
         public DbSet<Screen> Screens { get; set; }
         public DbSet<TheatreLocation> TheatreLocations { get; set; }
+        public DbSet<ScreenRow> ScreenRows { get; set; }
         public DbSet<TheatreSeat> TheatreSeats { get; set; }
         public DbSet<ShowsList> showsLists { get; set; }
 
@@ -106,6 +107,14 @@ namespace movie_booking.data
             modelBuilder.Entity<TheatreSeat>()
                 .HasOne(ts => ts.Screen)
                 .WithMany(s => s.TheatreSeats);
+
+            modelBuilder.Entity<Screen>()
+                .HasMany(s => s.ScreenRows)
+                .WithOne(sr => sr.Screen);
+
+            modelBuilder.Entity<ScreenRow>()
+                .HasMany(sr => sr.TheatreSeats)
+                .WithOne(ts => ts.ScreenRow);
 
         }
 

@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string RowName { get; set; }
         public string RowType { get; set; }  //like gold platinum etc
+        public int RowTicketPrice { get; set; }
         public int RowSeatsCount { get; set; }
         public int? ScreenId { get; set; }
         public int? TheatreId { get; set; }

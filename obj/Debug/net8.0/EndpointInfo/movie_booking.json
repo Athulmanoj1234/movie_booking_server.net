@@ -96,6 +96,25 @@
         "tags": [
           "AdminAuth"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenRowsDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenRowsDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScreenRowsDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -675,6 +694,102 @@
           }
         },
         "additionalProperties": false
+      },
+      "ScreenRowsDto": {
+        "type": "object",
+        "properties": {
+          "rowName": {
+            "type": "string",
+            "nullable": true
+          },
+          "rowType": {
+            "type": "string",
+            "nullable": true
+          },
+          "rowTicketPrice": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rowSeatsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "theatreSeatAvailability": {
+            "$ref": "#/components/schemas/TheatreSeatAvailability"
+          },
+          "showListInfo": {
+            "$ref": "#/components/schemas/ShowListInfo"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShowListDateTimeInfo": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "day": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "showListsTime": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShowListTimeInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShowListInfo": {
+        "type": "object",
+        "properties": {
+          "movieId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "showLists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShowListDateTimeInfo"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShowListTimeInfo": {
+        "type": "object",
+        "properties": {
+          "hours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "seconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TheatreSeatAvailability": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "UserRequestDto": {
         "type": "object",

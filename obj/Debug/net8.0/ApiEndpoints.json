@@ -6,7 +6,13 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "ScreenRowData",
+        "Type": "movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto.ScreenRowsDto",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": [
       {
         "Type": "System.String",

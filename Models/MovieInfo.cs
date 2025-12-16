@@ -19,6 +19,7 @@ namespace movie_booking.Models
         public string ClassificationAge { get; set; }
         public string MovieCover { get; set; }
         public string? MovieTrailer { get; set; }
+        //public DateOnly MovieReleaseDate { get; set; }
         public bool IsMovieCommingSoon { get; set; }
         public bool IsMovieCurrentlyRunning { get; set; }
         public bool IsBookingStarted { get; set; }

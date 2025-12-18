@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string ScreenName { get; set; }
-        public string ScreenCapacity { get; set; }
+        public int ScreenCapacity { get; set; }
         public string ScreenType { get; set; }
         public string AspectRatio { get; set; }
         public string ProjectionFormat { get; set; }

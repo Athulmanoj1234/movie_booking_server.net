@@ -18,7 +18,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<AccountBL>();
 builder.Services.AddScoped<MovieDetailBL>();
-
+builder.Services.AddScoped<TheatreBL>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordHashService>();
 builder.Services.AddScoped<MovieDetailsService>();

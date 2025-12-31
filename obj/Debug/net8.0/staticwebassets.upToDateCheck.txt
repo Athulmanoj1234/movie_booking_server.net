@@ -1,6 +1,6 @@
-wwwroot\uploads\MovieCovers\eko-20251014220917-23930.jpg
-wwwroot\uploads\MovieCovers\Oppenheimer_(film) poster.jpg
 wwwroot\uploads\MovieCovers\avatar3cover.jpg
 wwwroot\uploads\MovieCovers\Bha_Bha_Ba_poster.jpg
+wwwroot\uploads\MovieCovers\eko-20251014220917-23930.jpg
+wwwroot\uploads\MovieCovers\Oppenheimer_(film) poster.jpg
 wwwroot\uploads\MovieCovers\The-Last-Voyage-of-the-Demeter_1681628138.avif
 wwwroot\uploads\MovieCovers\vilayadh_budha_cover.jpg

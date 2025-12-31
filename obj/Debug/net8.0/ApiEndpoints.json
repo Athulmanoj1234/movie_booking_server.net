@@ -6,13 +6,7 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "ScreenRowData",
-        "Type": "movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto.ScreenRowsDto",
-        "IsRequired": true
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": [
       {
         "Type": "System.String",
@@ -263,6 +257,38 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.TheatreController",
+    "Method": "FirstLevelTheatreOnBoard",
+    "RelativePath": "api/Theatre/firstLevelOnboard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "FirstLevelUploadDto",
+        "Type": "movie_booking.Dtos.Request.Theatre.FirstLevelUploadDto.FirstLevelTheaterInfoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.TheatreController",
+    "Method": "SecondLevelTheatreOnBoard",
+    "RelativePath": "api/Theatre/secondLevelOnboard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "SecondLevelUploadDto",
+        "Type": "movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto.TheatreLocationDto",
         "IsRequired": true
       }
     ],

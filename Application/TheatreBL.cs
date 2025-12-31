@@ -30,12 +30,17 @@ namespace movie_booking.Application
             }
             try
             {
+                var TheatreOnboardEntity = new TheatreInfo()
+                {
+                    TheatreTitle = FirstLevelTheaterInfoDto.TheatreTitle,
+                };
+                this._dbContext.TheatreInfos.Add(TheatreOnboardEntity);
                 foreach (FirstLevelScreenInfo firstLevelScreenInfo in FirstLevelTheaterInfoDto.Screen)
                 {
                     if (string.IsNullOrEmpty(firstLevelScreenInfo.ScreenName) || string.IsNullOrEmpty(firstLevelScreenInfo.Dimension)
                         || string.IsNullOrEmpty(firstLevelScreenInfo.ProjectionFormat) || string.IsNullOrEmpty(firstLevelScreenInfo.ScreenType)
                         || string.IsNullOrEmpty(firstLevelScreenInfo.AudioSpecific) || string.IsNullOrEmpty(firstLevelScreenInfo.ScreenAspectRatio)
-                        || string.IsNullOrEmpty(firstLevelScreenInfo.ScreenType) || firstLevelScreenInfo.ScreenCapacity == null || firstLevelScreenInfo.ScreenCapacity == 0)
+                        || string.IsNullOrEmpty(firstLevelScreenInfo.ScreenType) || string.IsNullOrEmpty(firstLevelScreenInfo.ProjectionFormat) || firstLevelScreenInfo.ScreenCapacity == null || firstLevelScreenInfo.ScreenCapacity == 0)
                     {
 
                         return new SuccessOrErrorResponseDto<TheatreInfo>()
@@ -45,27 +50,24 @@ namespace movie_booking.Application
                             IsSuccess = false,
                         };
                     }
-                    var TheatreOnboardEntity = new TheatreInfo()
-                    {
-                        TheatreTitle = FirstLevelTheaterInfoDto.TheatreTitle,
-                    };
                     var ScreenOnboardEntity = new Screen()
                     {
                         ScreenName = firstLevelScreenInfo.ScreenName,
                         ScreenCapacity = firstLevelScreenInfo.ScreenCapacity,
                         ScreenType = firstLevelScreenInfo.ScreenType,
+                        ProjectionFormat = firstLevelScreenInfo.ProjectionFormat,
                         AspectRatio = firstLevelScreenInfo.ScreenAspectRatio,
                         Dimension = firstLevelScreenInfo.Dimension,
                         Audio = firstLevelScreenInfo.AudioSpecific,
                         IsAirConditioner = firstLevelScreenInfo.IsAcSuppported,
                     };
-                    this._dbContext.Add(TheatreOnboardEntity);
-                    this._dbContext.Add(TheatreOnboardEntity);
+                    
+                    this._dbContext.Screens.Add(ScreenOnboardEntity);
                 }
                 await this._dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<TheatreInfo>()
                 {
-                    StatusCode = 400,
+                    StatusCode = 200,
                     IsSuccess = true,
                     Messege = $"theatre adnd screen onboarded successfully",
                 };
@@ -81,12 +83,12 @@ namespace movie_booking.Application
         }
 
         public async Task<SuccessOrErrorResponseDto<TheatreLocation>> SecondLevelTheatreOnBoard(TheatreLocationDto SecondLevelTheaterInfoDto) {
-            if (SecondLevelTheaterInfoDto is null || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.City) || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.State) 
+            if (string.IsNullOrEmpty(SecondLevelTheaterInfoDto.City) || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.State) 
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.CountryName)
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.CountryCode)
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.PostalCode)
-                || SecondLevelTheaterInfoDto.Latitude == 0 
-                || SecondLevelTheaterInfoDto.Longitude == null) {
+                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Latitude) 
+                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Longitude)) {
 
                 return new SuccessOrErrorResponseDto<TheatreLocation>()
                 {
@@ -106,7 +108,7 @@ namespace movie_booking.Application
                     Latitude = SecondLevelTheaterInfoDto.Latitude,
                     Longitude = SecondLevelTheaterInfoDto.Longitude,
                 };
-                this._dbContext.Add(TheatreLocationEntity);
+                this._dbContext.TheatreLocations.Add(TheatreLocationEntity);
                 await this._dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<TheatreLocation>()
                 {

@@ -96,25 +96,6 @@
         "tags": [
           "AdminAuth"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ScreenRowsDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ScreenRowsDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ScreenRowsDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -443,6 +424,68 @@
         }
       }
     },
+    "/api/Theatre/firstLevelOnboard": {
+      "post": {
+        "tags": [
+          "Theatre"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirstLevelTheaterInfoDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirstLevelTheaterInfoDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FirstLevelTheaterInfoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Theatre/secondLevelOnboard": {
+      "post": {
+        "tags": [
+          "Theatre"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TheatreLocationDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TheatreLocationDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TheatreLocationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserAuth/GetUserByMobileNumber": {
       "get": {
         "tags": [
@@ -695,101 +738,93 @@
         },
         "additionalProperties": false
       },
-      "ScreenRowsDto": {
+      "FirstLevelScreenInfo": {
         "type": "object",
         "properties": {
-          "rowName": {
+          "screenName": {
             "type": "string",
             "nullable": true
           },
-          "rowType": {
+          "screenCapacity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "screenType": {
             "type": "string",
             "nullable": true
           },
-          "rowTicketPrice": {
-            "type": "integer",
-            "format": "int32"
+          "screenAspectRatio": {
+            "type": "string",
+            "nullable": true
           },
-          "rowSeatsCount": {
-            "type": "integer",
-            "format": "int32"
+          "projectionFormat": {
+            "type": "string",
+            "nullable": true
           },
-          "theatreSeatAvailability": {
-            "$ref": "#/components/schemas/TheatreSeatAvailability"
+          "dimension": {
+            "type": "string",
+            "nullable": true
           },
-          "showListInfo": {
-            "$ref": "#/components/schemas/ShowListInfo"
+          "audioSpecific": {
+            "type": "string",
+            "nullable": true
+          },
+          "isAcSuppported": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
       },
-      "ShowListDateTimeInfo": {
+      "FirstLevelTheaterInfoDto": {
         "type": "object",
         "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
+          "theatreTitle": {
+            "type": "string",
+            "nullable": true
           },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "showListsTime": {
+          "screen": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ShowListTimeInfo"
+              "$ref": "#/components/schemas/FirstLevelScreenInfo"
             },
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "ShowListInfo": {
+      "TheatreLocationDto": {
         "type": "object",
         "properties": {
-          "movieId": {
-            "type": "integer",
-            "format": "int32"
+          "city": {
+            "type": "string",
+            "nullable": true
           },
-          "showLists": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShowListDateTimeInfo"
-            },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "string",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
-      },
-      "ShowListTimeInfo": {
-        "type": "object",
-        "properties": {
-          "hours": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TheatreSeatAvailability": {
-        "enum": [
-          0,
-          1
-        ],
-        "type": "integer",
-        "format": "int32"
       },
       "UserRequestDto": {
         "type": "object",

@@ -1,8 +1,11 @@
-﻿using movie_booking.data;
+﻿using Microsoft.EntityFrameworkCore;
+using movie_booking.data;
 using movie_booking.Dtos.Request.Theatre.FirstLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
+using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
 using movie_booking.Models.Ttheatre;
+using System.Runtime.Serialization.Formatters;
 
 namespace movie_booking.Application
 {
@@ -10,6 +13,7 @@ namespace movie_booking.Application
     {
         private IConfiguration _configuration;
         private ApplicationDbContext _dbContext;
+        public bool isSeatAvailable = true;
 
         public TheatreBL(IConfiguration Configuration, ApplicationDbContext DbContext) { 
             this._configuration = Configuration;
@@ -126,5 +130,70 @@ namespace movie_booking.Application
                 };
             }
         }
+
+        public async Task<SuccessOrErrorResponseDto<TheatreSeat>> ThirdLevelRowInfoAdd(ScreenRowsDto screenRowsDto) {
+            try
+            {
+                Screen screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.ScreenName == screenRowsDto.ScreenName);
+                TheatreInfo theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(theatre => theatre.TheatreTitle == screenRowsDto.TheatreName);
+
+                if (screenInfo is null || theatreInfo is null)
+                {
+                    return new SuccessOrErrorResponseDto<TheatreSeat>()
+                    {
+                        StatusCode = 400,
+                        IsSuccess = false,
+                        Messege = $"theatre or screeninfo cant be found"
+                    };
+                }
+
+                var ScreenRowEntity = new ScreenRow()
+                {
+                    RowName = screenRowsDto.RowName,
+                    RowType = screenRowsDto.RowType,
+                    RowTicketPrice = screenRowsDto.RowTicketPrice,
+                    RowSeatsCount = screenRowsDto.RowSeatsCount,
+                    ScreenId = screenInfo?.Id,
+                    TheatreId = theatreInfo?.Id
+                };
+                await _dbContext.ScreenRows.AddAsync(ScreenRowEntity);
+
+                for (int i = 1; i <= screenRowsDto.RowSeatsCount; i++)
+                {
+                    var theatreSeat = new TheatreSeat()
+                    {
+                        SeatNumber = screenRowsDto.RowName + i,
+                        SeatAvailabilityStatus = screenRowsDto.TheatreSeatAvailability,
+                        SeatTicketPrice = screenRowsDto.RowTicketPrice,
+                    };
+                    if (screenRowsDto?.NotAvailableSeatNumber != null)
+                    {
+                        foreach (int notAvailableSeatNumber in screenRowsDto.NotAvailableSeatNumber)
+                        {
+                            theatreSeat = new TheatreSeat()
+                            {
+                                SeatNumber = screenRowsDto.RowName + notAvailableSeatNumber,
+                            };
+                        }
+                    }
+                    await this._dbContext.TheatreSeats.AddAsync(theatreSeat);
+                }
+                await _dbContext.SaveChangesAsync();
+                return new SuccessOrErrorResponseDto<TheatreSeat>()
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = $"screen rows and row seats added successfully",
+                };
+            }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<TheatreSeat>() {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+        }
+
     }
 }

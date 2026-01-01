@@ -42,7 +42,7 @@ namespace movie_booking.Controllers
             return Ok(response);
         }
 
-        [HttpPost("secondLevelOnboard")]
+        [HttpPost("thirdLevelOnboard")]
         public async Task<IActionResult> ThirdLevelOnboardRowInfoAdd(ScreenRowsDto screenRowsDto)
         {
             SuccessOrErrorResponseDto<TheatreSeat> response = await this._theatreBl.ThirdLevelRowInfoAdd(screenRowsDto);

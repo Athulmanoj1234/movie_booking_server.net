@@ -20,6 +20,8 @@ namespace movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto
         [Required(ErrorMessage = "row name cannot be empty/null")]
         [CheckMinimumRange(1)]
         public int RowSeatsCount { get; set; }
+
+        public bool IsAnySeatNotAvailable { get; set; }
         // seat level
         [Required(ErrorMessage = "screen name cannot be empty/null")]
         public string ScreenName { get; set; }
@@ -30,10 +32,10 @@ namespace movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto
         [CheckMinimumRange(1)]
         public ICollection<int>? NotAvailableSeatNumber { get; set; } = new List<int>();
         //[Required(ErrorMessage = "row name cannot be empty")]
-        public bool TheatreSeatAvailability { get; set; }
+        //public bool TheatreSeatAvailability { get; set; }
         //show time and dates level
 
         //[Required(ErrorMessage = "row name cannot be empty")]
-        public ShowListInfo ShowListInfo { get; set; }
+        public ShowListInfo? ShowListInfo { get; set; }
     }
 }

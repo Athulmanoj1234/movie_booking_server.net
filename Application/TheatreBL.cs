@@ -156,27 +156,30 @@ namespace movie_booking.Application
                     ScreenId = screenInfo?.Id,
                     TheatreId = theatreInfo?.Id
                 };
-                await _dbContext.ScreenRows.AddAsync(ScreenRowEntity);
+                this._dbContext.ScreenRows.Add(ScreenRowEntity);
+                await _dbContext.SaveChangesAsync();
 
                 for (int i = 1; i <= screenRowsDto.RowSeatsCount; i++)
                 {
                     var theatreSeat = new TheatreSeat()
                     {
                         SeatNumber = screenRowsDto.RowName + i,
-                        SeatAvailabilityStatus = screenRowsDto.TheatreSeatAvailability,
+                        //SeatAvailabilityStatus = screenRowsDto.TheatreSeatAvailability,
                         SeatTicketPrice = screenRowsDto.RowTicketPrice,
+                        ScreenId = screenInfo.Id,
                     };
-                    if (screenRowsDto?.NotAvailableSeatNumber != null)
-                    {
-                        foreach (int notAvailableSeatNumber in screenRowsDto.NotAvailableSeatNumber)
-                        {
-                            theatreSeat = new TheatreSeat()
-                            {
-                                SeatNumber = screenRowsDto.RowName + notAvailableSeatNumber,
-                            };
-                        }
-                    }
-                    await this._dbContext.TheatreSeats.AddAsync(theatreSeat);
+                    //if (screenRowsDto?.NotAvailableSeatNumber.Count != 0)
+                    //{
+                    //    foreach (int notAvailableSeatNumber in screenRowsDto.NotAvailableSeatNumber)
+                    //    {
+                    //        TheatreSeat notAvailableSeat = 
+                    //        theatreSeat = new TheatreSeat()
+                    //        {
+                    //            SeatAvailabilityStatus = screenRowsDto.IsAnySeatNotAvailable,
+                    //        };
+                    //    }
+                    //}
+                    this._dbContext.TheatreSeats.Add(theatreSeat);
                 }
                 await _dbContext.SaveChangesAsync();
                 return new SuccessOrErrorResponseDto<TheatreSeat>()

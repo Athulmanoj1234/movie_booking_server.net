@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using movie_booking.data;
 
@@ -11,9 +12,11 @@ using movie_booking.data;
 namespace movie_booking.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104174923_theatre seat model null handling added")]
+    partial class theatreseatmodelnullhandlingadded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -424,10 +427,13 @@ namespace movie_booking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("RowId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("ScreenId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ScreenRowId")
+                    b.Property<int>("ScreenRowId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("SeatAvailabilityStatus")
@@ -656,7 +662,9 @@ namespace movie_booking.Migrations
 
                     b.HasOne("movie_booking.Models.Ttheatre.ScreenRow", "ScreenRow")
                         .WithMany("TheatreSeats")
-                        .HasForeignKey("ScreenRowId");
+                        .HasForeignKey("ScreenRowId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Screen");
 

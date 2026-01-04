@@ -295,6 +295,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "movie_booking.Controllers.TheatreController",
+    "Method": "ThirdLevelOnboardRowInfoAdd",
+    "RelativePath": "api/Theatre/thirdLevelOnboard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "screenRowsDto",
+        "Type": "movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto.ScreenRowsDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.UserAuthController",
     "Method": "GetOrAddUserbyMobile",
     "RelativePath": "api/UserAuth/GetUserByMobileNumber",

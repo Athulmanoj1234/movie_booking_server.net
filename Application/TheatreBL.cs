@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using movie_booking.data;
 using movie_booking.Dtos.Request.Theatre.FirstLevelUploadDto;
+using movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
+using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
 using System.Runtime.Serialization.Formatters;
 
@@ -196,6 +198,70 @@ namespace movie_booking.Application
                     Messege = ex.Message,
                 };
             }
+        }
+
+        public async Task<SuccessOrErrorResponseDto<ShowsList>> FourthLevelRowInfoAdd(ICollection<ShowListUploadDto> showListUploads) {
+
+            if (showListUploads.Count == 0) {
+                return new SuccessOrErrorResponseDto<ShowsList>() {
+                    StatusCode = 400,
+                    IsSuccess = false,
+                    Messege = $"showlist array is empty",
+                };
+            }
+
+            try
+            {
+                foreach (ShowListUploadDto showList in showListUploads)
+                {
+                    string[] showDate = showList.Date.Split("-");
+                    string[] showStartTime = showList.ShowStartTime.Split(":");
+                    string[] showEndTime = showList.ShowEndTime.Split(":");
+
+                    int.TryParse(showDate[0], out int showYear);
+                    int.TryParse(showDate[1], out int showMonth);
+                    int.TryParse(showDate[2], out int showDay);
+
+                    int.TryParse(showStartTime[0], out int ShowStartHour);
+                    int.TryParse(showStartTime[1], out int showStartMinute);
+
+                    int.TryParse(showEndTime[0], out int ShowEndHour);
+                    int.TryParse(showEndTime[1], out int showEndMinute);
+
+                    MovieInfo movie = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.Id == showList.MovieInfoId);
+                    Screen screen = await this._dbContext.Screens.FirstOrDefaultAsync(s => s.Id == showList.ScreenId);
+                    if (movie == null || screen == null)
+                    {
+                        return new SuccessOrErrorResponseDto<ShowsList>()
+                        {
+                            StatusCode = 400,
+                            IsSuccess = false,
+                            Messege = $"failed to get movie and screen from database",
+                        };
+                    }
+                    this._dbContext.ShowsLists.Add(new ShowsList()
+                    {
+                        ShowDate = new DateOnly(showYear, showMonth, showDay),
+                        ShowStart = new TimeSpan(ShowStartHour, showStartMinute, 00),
+                        ShowEnd = new TimeSpan(ShowEndHour, showEndMinute, 00),
+                        MovieInfoId = movie.Id,
+                        ScreenId = screen.Id,
+                    });
+                }
+                await this._dbContext.SaveChangesAsync();
+                return new SuccessOrErrorResponseDto<ShowsList>() { 
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = $"Successfully added showList"
+                };
+            } catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<ShowsList>() {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            };
+ 
         }
 
     }

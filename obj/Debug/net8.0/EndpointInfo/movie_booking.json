@@ -517,6 +517,46 @@
         }
       }
     },
+    "/api/Theatre/fourthLevelOnboard": {
+      "post": {
+        "tags": [
+          "Theatre"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShowListUploadDto"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShowListUploadDto"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShowListUploadDto"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserAuth/GetUserByMobileNumber": {
       "get": {
         "tags": [
@@ -929,6 +969,39 @@
             "format": "int32"
           },
           "seconds": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShowListUploadDto": {
+        "required": [
+          "date",
+          "movieInfoId",
+          "screenId",
+          "showEndTime",
+          "showStartTime"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "showStartTime": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "showEndTime": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "movieInfoId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "screenId": {
             "type": "integer",
             "format": "int32"
           }

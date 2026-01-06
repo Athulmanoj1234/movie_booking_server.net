@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_booking.Application;
 using movie_booking.Dtos.Request.Theatre.FirstLevelUploadDto;
+using movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
@@ -53,5 +54,18 @@ namespace movie_booking.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("fourthLevelOnboard")]
+        public async Task<IActionResult> FourthLevelOnboardRowInfoAdd(ICollection<ShowListUploadDto> showListDto)
+        {
+            SuccessOrErrorResponseDto<ShowsList> response = await this._theatreBl.FourthLevelRowInfoAdd(showListDto);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
     }
 }

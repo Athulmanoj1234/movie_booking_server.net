@@ -280,6 +280,22 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.TheatreController",
+    "Method": "FourthLevelOnboardRowInfoAdd",
+    "RelativePath": "api/Theatre/fourthLevelOnboard",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "showListDto",
+        "Type": "System.Collections.Generic.ICollection\u00601[[movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto.ShowListUploadDto, movie_booking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.TheatreController",
     "Method": "SecondLevelTheatreOnBoard",
     "RelativePath": "api/Theatre/secondLevelOnboard",
     "HttpMethod": "POST",

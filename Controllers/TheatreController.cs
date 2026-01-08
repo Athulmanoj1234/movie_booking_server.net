@@ -6,6 +6,7 @@ using movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
+using movie_booking.Dtos.Response.Theatre;
 using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
 
@@ -59,6 +60,18 @@ namespace movie_booking.Controllers
         public async Task<IActionResult> FourthLevelOnboardRowInfoAdd(ICollection<ShowListUploadDto> showListDto)
         {
             SuccessOrErrorResponseDto<ShowsList> response = await this._theatreBl.FourthLevelRowInfoAdd(showListDto);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
+        [HttpGet("getTheatreInfo")]
+        public async Task<IActionResult> getTheatreInfo()
+        {
+            SuccessOrErrorResponseDto<TheatreResponse> response = await this._theatreBl.GetTheatreInfo();
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)

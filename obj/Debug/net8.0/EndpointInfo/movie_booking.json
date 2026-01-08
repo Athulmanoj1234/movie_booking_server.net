@@ -557,6 +557,18 @@
         }
       }
     },
+    "/api/Theatre/getTheatreInfo": {
+      "get": {
+        "tags": [
+          "Theatre"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/UserAuth/GetUserByMobileNumber": {
       "get": {
         "tags": [

@@ -296,6 +296,16 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.TheatreController",
+    "Method": "getTheatreInfo",
+    "RelativePath": "api/Theatre/getTheatreInfo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.TheatreController",
     "Method": "SecondLevelTheatreOnBoard",
     "RelativePath": "api/Theatre/secondLevelOnboard",
     "HttpMethod": "POST",

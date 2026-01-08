@@ -5,6 +5,7 @@ using movie_booking.data;
 using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
+using movie_booking.Models.Ttheatre;
 using movie_booking.services;
 using System.IO;
 using System.Reflection.Metadata.Ecma335;

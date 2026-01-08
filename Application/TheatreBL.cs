@@ -5,8 +5,10 @@ using movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
+using movie_booking.Dtos.Response.Theatre;
 using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
+using System.Collections.Generic;
 using System.Runtime.Serialization.Formatters;
 
 namespace movie_booking.Application
@@ -16,6 +18,8 @@ namespace movie_booking.Application
         private IConfiguration _configuration;
         private ApplicationDbContext _dbContext;
         public bool isSeatAvailable = true;
+        public List<TheatreScreenResponseInfoDto> screens = new List<TheatreScreenResponseInfoDto>();
+        public List<MovieInfoResponseDto> movies = new List<MovieInfoResponseDto>();
 
         public TheatreBL(IConfiguration Configuration, ApplicationDbContext DbContext) { 
             this._configuration = Configuration;
@@ -262,6 +266,79 @@ namespace movie_booking.Application
                 };
             };
  
+        }
+
+        public async Task<SuccessOrErrorResponseDto<TheatreResponse>>GetTheatreInfo()
+        {
+            try
+            {
+                TheatreInfo theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(); ;
+                List<Screen> screens = await _dbContext.Screens.ToListAsync();
+                List<MovieInfo> movies = await _dbContext.MovieInfos.Where(mi => mi.IsBookingStarted == true).ToListAsync();
+
+                TheatreInfoResponseDto theatreInfoResponse = new TheatreInfoResponseDto() {
+                    Id = theatreInfo.Id,
+                    TheatreTitle = theatreInfo.TheatreTitle,
+                };
+
+                foreach (Screen screen in screens) {
+                    TheatreScreenResponseInfoDto theatreScreeInfos = new TheatreScreenResponseInfoDto() { 
+                        Id = screen.Id,
+                        ScreenName = screen.ScreenName,
+                        ScreenCapacity = screen.ScreenCapacity,
+                        ScreenType = screen.ScreenType,
+                        AspectRatio = screen.AspectRatio,
+                        ProjectionFormat = screen.ProjectionFormat,
+                        Dimension = screen.Dimension,
+                        Audio = screen.Audio,
+                        IsAirConditioner = screen.IsAirConditioner,
+                    };
+                    this.screens.Add(theatreScreeInfos);
+                }
+
+                foreach (MovieInfo movieInfo in movies)
+                {
+                    MovieInfoResponseDto movieInfoResponse = new MovieInfoResponseDto()
+                    {
+                        Id = movieInfo.Id,
+                        Genre = movieInfo.Genre,
+                        MovieName = movieInfo.MovieName,
+                        Audiolanguage = movieInfo.Audiolanguage,
+                        SubtitleLanguage = movieInfo.SubtitleLanguage,
+                        MovieDuration = movieInfo.MovieDuration,
+                        ImdbRating = movieInfo.ImdbRating,
+                        AppRating = movieInfo.AppRating,
+                        MovieDescription = movieInfo.MovieDescription,
+                        ClassificationAge = movieInfo.ClassificationAge,
+                        MovieCover = movieInfo.MovieCover,
+                        MovieTrailer = movieInfo.MovieTrailer,
+                        IsMovieCommingSoon = movieInfo.IsMovieCommingSoon,
+                        IsMovieCurrentlyRunning = movieInfo.IsMovieCurrentlyRunning,
+                        IsBookingStarted = movieInfo.IsBookingStarted,
+                    };
+                    this.movies.Add(movieInfoResponse);
+                }
+
+                return new SuccessOrErrorResponseDto<TheatreResponse>()
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = $"theatre info fetched successfully",
+                    Data = new TheatreResponse() { 
+                        TheatreDetails = theatreInfoResponse,
+                        TheatreScreenResponseDetails = this.screens,
+                        MovieInfoResponseDetails = this.movies,
+                    },
+                };
+            }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<TheatreResponse>()
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                 };
+            }
         }
 
     }

@@ -23,8 +23,12 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordHashService>();
 builder.Services.AddScoped<MovieDetailsService>();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,

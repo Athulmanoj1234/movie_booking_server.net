@@ -5,6 +5,8 @@
         public TheatreInfoResponseDto TheatreDetails { get; set; }
         public ICollection<TheatreScreenResponseInfoDto> TheatreScreenResponseDetails { get; set; } = new List<TheatreScreenResponseInfoDto>();
         public ICollection<MovieInfoResponseDto> MovieInfoResponseDetails { get; set; } = new List<MovieInfoResponseDto>();
+        public long ElapsedMilliSeconds { get; set; }
+        public double ElapsedSeconds { get; set; }
 
     }
 }

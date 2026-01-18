@@ -9,6 +9,7 @@ using movie_booking.Dtos.Response.Theatre;
 using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization.Formatters;
 
 namespace movie_booking.Application
@@ -17,20 +18,25 @@ namespace movie_booking.Application
     {
         private IConfiguration _configuration;
         private ApplicationDbContext _dbContext;
+        private IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         public bool isSeatAvailable = true;
         public List<TheatreScreenResponseInfoDto> screens = new List<TheatreScreenResponseInfoDto>();
         public List<MovieInfoResponseDto> movies = new List<MovieInfoResponseDto>();
 
-        public TheatreBL(IConfiguration Configuration, ApplicationDbContext DbContext) { 
+        public TheatreBL(IConfiguration Configuration, ApplicationDbContext DbContext, IDbContextFactory<ApplicationDbContext> dbContextFactory)
+        {
             this._configuration = Configuration;
             this._dbContext = DbContext;
+            this._dbContextFactory = dbContextFactory;
         }
 
         //theatreinfo and screen onboard
-        public async Task<SuccessOrErrorResponseDto<TheatreInfo>> FirstLevelTheatreOnBoard(FirstLevelTheaterInfoDto FirstLevelTheaterInfoDto) {
+        public async Task<SuccessOrErrorResponseDto<TheatreInfo>> FirstLevelTheatreOnBoard(FirstLevelTheaterInfoDto FirstLevelTheaterInfoDto)
+        {
             if (FirstLevelTheaterInfoDto is null || string.IsNullOrEmpty(FirstLevelTheaterInfoDto.TheatreTitle)
                 || FirstLevelTheaterInfoDto.Screen is null
-                ||  FirstLevelTheaterInfoDto.Screen.Count == 0) {
+                || FirstLevelTheaterInfoDto.Screen.Count == 0)
+            {
                 return new SuccessOrErrorResponseDto<TheatreInfo>()
                 {
                     StatusCode = 400,
@@ -71,7 +77,7 @@ namespace movie_booking.Application
                         Audio = firstLevelScreenInfo.AudioSpecific,
                         IsAirConditioner = firstLevelScreenInfo.IsAcSuppported,
                     };
-                    
+
                     this._dbContext.Screens.Add(ScreenOnboardEntity);
                 }
                 await this._dbContext.SaveChangesAsync();
@@ -82,7 +88,8 @@ namespace movie_booking.Application
                     Messege = $"theatre adnd screen onboarded successfully",
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new SuccessOrErrorResponseDto<TheatreInfo>()
                 {
                     StatusCode = 500,
@@ -92,13 +99,15 @@ namespace movie_booking.Application
             }
         }
 
-        public async Task<SuccessOrErrorResponseDto<TheatreLocation>> SecondLevelTheatreOnBoard(TheatreLocationDto SecondLevelTheaterInfoDto) {
-            if (string.IsNullOrEmpty(SecondLevelTheaterInfoDto.City) || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.State) 
+        public async Task<SuccessOrErrorResponseDto<TheatreLocation>> SecondLevelTheatreOnBoard(TheatreLocationDto SecondLevelTheaterInfoDto)
+        {
+            if (string.IsNullOrEmpty(SecondLevelTheaterInfoDto.City) || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.State)
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.CountryName)
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.CountryCode)
                 || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.PostalCode)
-                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Latitude) 
-                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Longitude)) {
+                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Latitude)
+                || string.IsNullOrEmpty(SecondLevelTheaterInfoDto.Longitude))
+            {
 
                 return new SuccessOrErrorResponseDto<TheatreLocation>()
                 {
@@ -127,7 +136,8 @@ namespace movie_booking.Application
                     IsSuccess = true,
                 };
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 return new SuccessOrErrorResponseDto<TheatreLocation>()
                 {
                     StatusCode = 500,
@@ -137,7 +147,8 @@ namespace movie_booking.Application
             }
         }
 
-        public async Task<SuccessOrErrorResponseDto<TheatreSeat>> ThirdLevelRowInfoAdd(ScreenRowsDto screenRowsDto) {
+        public async Task<SuccessOrErrorResponseDto<TheatreSeat>> ThirdLevelRowInfoAdd(ScreenRowsDto screenRowsDto)
+        {
             try
             {
                 Screen screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.ScreenName == screenRowsDto.ScreenName);
@@ -195,8 +206,10 @@ namespace movie_booking.Application
                     Messege = $"screen rows and row seats added successfully",
                 };
             }
-            catch (Exception ex) {
-                return new SuccessOrErrorResponseDto<TheatreSeat>() {
+            catch (Exception ex)
+            {
+                return new SuccessOrErrorResponseDto<TheatreSeat>()
+                {
                     StatusCode = 500,
                     IsSuccess = false,
                     Messege = ex.Message,
@@ -204,10 +217,13 @@ namespace movie_booking.Application
             }
         }
 
-        public async Task<SuccessOrErrorResponseDto<ShowsList>> FourthLevelRowInfoAdd(ICollection<ShowListUploadDto> showListUploads) {
+        public async Task<SuccessOrErrorResponseDto<ShowsList>> FourthLevelRowInfoAdd(ICollection<ShowListUploadDto> showListUploads)
+        {
 
-            if (showListUploads.Count == 0) {
-                return new SuccessOrErrorResponseDto<ShowsList>() {
+            if (showListUploads.Count == 0)
+            {
+                return new SuccessOrErrorResponseDto<ShowsList>()
+                {
                     StatusCode = 400,
                     IsSuccess = false,
                     Messege = $"showlist array is empty",
@@ -253,36 +269,48 @@ namespace movie_booking.Application
                     });
                 }
                 await this._dbContext.SaveChangesAsync();
-                return new SuccessOrErrorResponseDto<ShowsList>() { 
+                return new SuccessOrErrorResponseDto<ShowsList>()
+                {
                     StatusCode = 200,
                     IsSuccess = true,
                     Messege = $"Successfully added showList"
                 };
-            } catch (Exception ex) {
-                return new SuccessOrErrorResponseDto<ShowsList>() {
+            }
+            catch (Exception ex)
+            {
+                return new SuccessOrErrorResponseDto<ShowsList>()
+                {
                     StatusCode = 500,
                     IsSuccess = false,
                     Messege = ex.Message,
                 };
-            };
- 
+            }
+            ;
+
         }
 
-        public async Task<SuccessOrErrorResponseDto<TheatreResponse>>GetTheatreInfo()
+        public async Task<SuccessOrErrorResponseDto<TheatreResponse>> GetTheatreInfo()
         {
             try
             {
-                TheatreInfo theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(); ;
-                List<Screen> screens = await _dbContext.Screens.ToListAsync();
-                List<MovieInfo> movies = await _dbContext.MovieInfos.Where(mi => mi.IsBookingStarted == true).ToListAsync();
+                Stopwatch stopWatch = System.Diagnostics.Stopwatch.StartNew();
+                var theatreInfoTask = this.RunWithLocalDbContext(_dbContextFactory, db => db.TheatreInfos.FirstOrDefaultAsync());
+                var screensTask = this.RunWithLocalDbContext(_dbContextFactory, db => db.Screens.ToListAsync());
+                var moviesTask = this.RunWithLocalDbContext(_dbContextFactory, db => db.MovieInfos.Where(mi => mi.IsBookingStarted == true).ToListAsync());
 
-                TheatreInfoResponseDto theatreInfoResponse = new TheatreInfoResponseDto() {
-                    Id = theatreInfo.Id,
-                    TheatreTitle = theatreInfo.TheatreTitle,
+                await Task.WhenAll(theatreInfoTask, screensTask, moviesTask);
+                stopWatch.Stop();
+
+                TheatreInfoResponseDto theatreInfoResponse = new TheatreInfoResponseDto()
+                {
+                    Id = theatreInfoTask.Result.Id,
+                    TheatreTitle = theatreInfoTask.Result.TheatreTitle,
                 };
 
-                foreach (Screen screen in screens) {
-                    TheatreScreenResponseInfoDto theatreScreeInfos = new TheatreScreenResponseInfoDto() { 
+                foreach (Screen screen in screensTask.Result)
+                {
+                    TheatreScreenResponseInfoDto theatreScreeInfos = new TheatreScreenResponseInfoDto()
+                    {
                         Id = screen.Id,
                         ScreenName = screen.ScreenName,
                         ScreenCapacity = screen.ScreenCapacity,
@@ -296,7 +324,7 @@ namespace movie_booking.Application
                     this.screens.Add(theatreScreeInfos);
                 }
 
-                foreach (MovieInfo movieInfo in movies)
+                foreach (MovieInfo movieInfo in moviesTask.Result)
                 {
                     MovieInfoResponseDto movieInfoResponse = new MovieInfoResponseDto()
                     {
@@ -324,21 +352,33 @@ namespace movie_booking.Application
                     StatusCode = 200,
                     IsSuccess = true,
                     Messege = $"theatre info fetched successfully",
-                    Data = new TheatreResponse() { 
+                    Data = new TheatreResponse()
+                    {
                         TheatreDetails = theatreInfoResponse,
                         TheatreScreenResponseDetails = this.screens,
                         MovieInfoResponseDetails = this.movies,
+                        ElapsedMilliSeconds = stopWatch.ElapsedMilliseconds,
+                        ElapsedSeconds = stopWatch.Elapsed.TotalSeconds,
                     },
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new SuccessOrErrorResponseDto<TheatreResponse>()
                 {
                     StatusCode = 500,
                     IsSuccess = false,
                     Messege = ex.Message,
-                 };
+                };
             }
+        }
+
+
+
+        public async Task<T> RunWithLocalDbContext<T>(IDbContextFactory<ApplicationDbContext> factory, Func<ApplicationDbContext, Task<T>> resultFunc)
+        {
+            await using var context = await factory.CreateDbContextAsync();
+            return await resultFunc(context);
         }
 
     }

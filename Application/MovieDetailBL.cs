@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.IdentityModel.Tokens;
 using movie_booking.data;
 using movie_booking.Dtos.Request;
+using movie_booking.Dtos.Request.showlistingsearch.queryparams;
+using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
@@ -405,6 +408,49 @@ namespace movie_booking.Application
             }
             catch (Exception ex) {
                 return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>
+                {
+                    StatusCode = 500,
+                    IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+        }
+
+        public async Task<SuccessOrErrorResponseDto<MovieInfo>> GetShowLists(Showinfodetails ShowDetails)
+        {
+            DateOnly filterDate = new DateOnly(ShowDetails.ShowYear, ShowDetails.ShowMonth, ShowDetails.ShowDay);
+            try {
+                //List<ShowsList> showLists = await this._dbContext.ShowsLists
+                //    .Where<ShowsList>(sl => sl.ShowDate == filterDate)
+                //    .Include(sl => sl.Movie).ToListAsync();
+
+                MovieInfo showLists = await this._dbContext.MovieInfos
+                    .Where(mi => mi.Id == ShowDetails.MovieID)
+                    .Include(mi => mi.MovieShowList)
+                    .FirstOrDefaultAsync();
+                    
+
+                if (showLists is null) {
+                    return new SuccessOrErrorResponseDto<MovieInfo>
+                    {
+                        StatusCode = 500,
+                        IsSuccess = false,
+                        Messege = $"failed to fetch showlists" +
+                        $" / show lists is empty on the date -" +
+                        $" ${ShowDetails.ShowDay}-{ShowDetails.ShowMonth}-{ShowDetails.ShowYear}",
+                    };
+                }
+
+                return new SuccessOrErrorResponseDto<MovieInfo>
+                {
+                    StatusCode = 200,
+                    IsSuccess = true,
+                    Messege = "successfully fetched lists",
+                    Data = showLists,
+                };
+
+            } catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<MovieInfo>
                 {
                     StatusCode = 500,
                     IsSuccess = false,

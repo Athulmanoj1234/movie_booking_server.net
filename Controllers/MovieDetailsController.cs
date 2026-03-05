@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using movie_booking.Application;
 using movie_booking.Dtos.Request;
+using movie_booking.Dtos.Request.showlistingsearch.queryparams;
 using movie_booking.Dtos.Response;
 using movie_booking.Models;
 using movie_booking.services;
@@ -84,6 +85,19 @@ namespace movie_booking.Controllers
         [HttpPatch("AddDirectorWriterActorToMovieInfo/{id}")]
         public async Task<IActionResult> AddDirectorWriterActorToMovieInfo(int id, DirectorWriterActorUpdateDto DirectorWriterActorUpdateData) {
             SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto> response = await this._movieDetailBL.AddDirectorWriterActorToMovieInfo(id, DirectorWriterActorUpdateData);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
+        // for user app
+        [HttpGet("GetShowLists")]
+        public async Task<IActionResult> GetShowLists([FromQuery] Showinfodetails ShowDetails)
+        {
+            var response = await this._movieDetailBL.GetShowLists(ShowDetails);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)

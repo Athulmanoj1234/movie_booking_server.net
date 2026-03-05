@@ -11,6 +11,8 @@ using movie_booking.Models;
 using movie_booking.services;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Http;
+using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
+using movie_booking.Dtos.Request.showlistingsearch.queryparams;
 
 
 namespace movie_booking.Application
@@ -518,5 +520,6 @@ namespace movie_booking.Application
                 };
             }
         }
+
     }
     }

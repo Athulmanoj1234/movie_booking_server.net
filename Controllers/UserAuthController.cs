@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using movie_booking.Application;
 using movie_booking.data;
 using movie_booking.Dtos.Request;
+using movie_booking.Dtos.Request.showlistingsearch.queryparams;
 using movie_booking.Dtos.Response;
 
 namespace movie_booking.Controllers
@@ -88,6 +89,8 @@ namespace movie_booking.Controllers
 
             return Ok(response);
         }
+
+       
 
     }
 }

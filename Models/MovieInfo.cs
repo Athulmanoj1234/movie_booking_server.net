@@ -34,6 +34,8 @@ namespace movie_booking.Models
 
         public ICollection<MovieInfoActor> MovieInfoActors { get; set; } = new List<MovieInfoActor>();
         public ICollection<MovieInfoWriter> MovieInfoWriters { get; set; } = new List<MovieInfoWriter>();
+
+        //[JsonIgnore]
         public ICollection<ShowsList> MovieShowList { get; set; } = new List<ShowsList>();
     }
 }

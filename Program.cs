@@ -34,7 +34,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
     policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("http://localhost:3000", "http://localhost:4200")
               .AllowCredentials()
               .AllowAnyHeader() //allows any custom headers to be sent with request in frontend
               .AllowAnyMethod(); //allow any http methods 

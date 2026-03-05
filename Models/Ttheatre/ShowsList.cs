@@ -1,4 +1,6 @@
-﻿namespace movie_booking.Models.Ttheatre
+﻿using System.Text.Json.Serialization;
+
+namespace movie_booking.Models.Ttheatre
 {
     public class ShowsList
     {
@@ -9,6 +11,8 @@
         public int? ScreenId { get; set; }
         public int? MovieInfoId { get; set; }
         public Screen Screen { get; set; }
+
+        [JsonIgnore]
         public MovieInfo Movie { get; set; }
     }
 }

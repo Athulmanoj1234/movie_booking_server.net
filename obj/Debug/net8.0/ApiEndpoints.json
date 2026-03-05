@@ -248,6 +248,37 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "GetShowLists",
+    "RelativePath": "api/MovieDetails/GetShowLists",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "MovieID",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowYear",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowMonth",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowDay",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
     "Method": "GetMovieInfo",
     "RelativePath": "api/MovieDetails/MovieInfo/{id}",
     "HttpMethod": "GET",

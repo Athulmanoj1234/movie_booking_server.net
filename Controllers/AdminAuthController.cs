@@ -42,7 +42,7 @@ namespace movie_booking.Controllers
                 Expires = DateTimeOffset.Now.AddDays(7), // Cookie expires in 7 days
                 //HttpOnly = true, // Makes the cookie inaccessible to client-side javascript
                 Secure = true, // Only send the cookie over HTTPS
-                SameSite = SameSiteMode.None // Controls when cookies are sent with cross-site requests
+                SameSite = SameSiteMode.Lax // Controls when cookies are sent with cross-site requests
             };
 
             Response.Cookies.Append("AdminRefreshToken", response.Data.AdminRefreshToken, cookieOptions);

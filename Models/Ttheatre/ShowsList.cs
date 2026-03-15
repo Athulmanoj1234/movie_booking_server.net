@@ -14,5 +14,6 @@ namespace movie_booking.Models.Ttheatre
 
         [JsonIgnore]
         public MovieInfo Movie { get; set; }
+        public ICollection<TheatreSeat>? Seats { get; set; } = new List<TheatreSeat>();
     }
 }

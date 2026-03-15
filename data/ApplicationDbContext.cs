@@ -108,6 +108,10 @@ namespace movie_booking.data
                 .HasOne(ts => ts.Screen)
                 .WithMany(s => s.TheatreSeats);
 
+            modelBuilder.Entity<TheatreSeat>()
+                .HasMany(ts => ts.ShowLists)
+                .WithMany(sl => sl.Seats);
+
             modelBuilder.Entity<Screen>()
                 .HasMany(s => s.ScreenRows)
                 .WithOne(sr => sr.Screen);

@@ -22,6 +22,7 @@ namespace movie_booking.Application
         public bool isSeatAvailable = true;
         public List<TheatreScreenResponseInfoDto> screens = new List<TheatreScreenResponseInfoDto>();
         public List<MovieInfoResponseDto> movies = new List<MovieInfoResponseDto>();
+        private Screen _screen;
 
         public TheatreBL(IConfiguration Configuration, ApplicationDbContext DbContext, IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
@@ -151,8 +152,8 @@ namespace movie_booking.Application
         {
             try
             {
-                Screen screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.ScreenName == screenRowsDto.ScreenName);
-                TheatreInfo theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(theatre => theatre.TheatreTitle == screenRowsDto.TheatreName);
+                Screen? screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.ScreenName == screenRowsDto.ScreenName);
+                TheatreInfo? theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(theatre => theatre.TheatreTitle == screenRowsDto.TheatreName);
 
                 if (screenInfo is null || theatreInfo is null)
                 {
@@ -174,7 +175,7 @@ namespace movie_booking.Application
                     TheatreId = theatreInfo?.Id
                 };
                 this._dbContext.ScreenRows.Add(ScreenRowEntity);
-                await _dbContext.SaveChangesAsync();
+                await this._dbContext.SaveChangesAsync();
 
                 for (int i = 1; i <= screenRowsDto.RowSeatsCount; i++)
                 {
@@ -248,8 +249,13 @@ namespace movie_booking.Application
                     int.TryParse(showEndTime[0], out int ShowEndHour);
                     int.TryParse(showEndTime[1], out int showEndMinute);
 
-                    MovieInfo movie = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.Id == showList.MovieInfoId);
-                    Screen screen = await this._dbContext.Screens.FirstOrDefaultAsync(s => s.Id == showList.ScreenId);
+                    var movie = await this._dbContext.MovieInfos.
+                                                      AsNoTracking()
+                                                      .FirstOrDefaultAsync(mi => mi.Id == showList.MovieInfoId);
+                    var screen = await this._dbContext.Screens
+                                                      .Include(s => s.TheatreSeats)
+                                                       .FirstOrDefaultAsync(s => s.Id == showList.ScreenId);
+                    //FirstOrDefaultAsync(s => s.Id == showList.ScreenId)
                     if (movie == null || screen == null)
                     {
                         return new SuccessOrErrorResponseDto<ShowsList>()
@@ -259,16 +265,37 @@ namespace movie_booking.Application
                             Messege = $"failed to get movie and screen from database",
                         };
                     }
-                    this._dbContext.ShowsLists.Add(new ShowsList()
-                    {
+
+                    var showListEntity = new ShowsList() {
                         ShowDate = new DateOnly(showYear, showMonth, showDay),
                         ShowStart = new TimeSpan(ShowStartHour, showStartMinute, 00),
                         ShowEnd = new TimeSpan(ShowEndHour, showEndMinute, 00),
                         MovieInfoId = movie.Id,
                         ScreenId = screen.Id,
-                    });
+                    };
+
+                    this._dbContext.ShowsLists.Add(showListEntity);
+
+                    foreach (var item in screen.TheatreSeats) {
+                        //this._dbContext.TheatreSeats.Add(new TheatreSeat() { 
+                        //    ShowLists = new List<ShowsList>() { showListEntity } 
+                        //});
+                        showListEntity.Seats.Add(item);
+                    };
+
                 }
                 await this._dbContext.SaveChangesAsync();
+
+                //we need to retrieve last added showlist so we sort it in descending order based on the id
+                //var lastAddedShowList = await this._dbContext.ShowsLists
+                //                                             .OrderByDescending(sl => sl.Id)
+                //                                             .FirstOrDefaultAsync();
+
+                //// add the data showlist to the specific seat
+                //foreach (ShowsList item in lastAddedShowList) {
+                //    item.Seats.Add()
+                //}
+                
                 return new SuccessOrErrorResponseDto<ShowsList>()
                 {
                     StatusCode = 200,

@@ -7,11 +7,14 @@ using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Request.showlistingsearch.queryparams;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
+using movie_booking.Dtos.Response.Theatre;
 using movie_booking.Models;
 using movie_booking.Models.Ttheatre;
 using movie_booking.services;
+using RabbitMQ.Client;
 using System.IO;
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 
 namespace movie_booking.Application
 {
@@ -424,7 +427,7 @@ namespace movie_booking.Application
                 //    .Where<ShowsList>(sl => sl.ShowDate == filterDate)
                 //    .Include(sl => sl.Movie).ToListAsync();
 
-                MovieInfo showLists = await this._dbContext.MovieInfos
+                var showLists = await this._dbContext.MovieInfos
                     .Where(mi => mi.Id == ShowDetails.MovieID)
                     .Include(mi => mi.MovieShowList)
                     .FirstOrDefaultAsync();
@@ -454,6 +457,57 @@ namespace movie_booking.Application
                 {
                     StatusCode = 500,
                     IsSuccess = false,
+                    Messege = ex.Message,
+                };
+            }
+        }
+
+        public async Task<SuccessOrErrorResponseDto<string>> isPaymentSuccess() {
+
+            string sookingId = "AKAF0022333334";
+            string seat = "A6";
+
+            var factory = new ConnectionFactory { HostName = "Localhost" };
+            using var connection = await factory.CreateConnectionAsync();
+            using var channel = await connection.CreateChannelAsync();
+
+            // here we are sending messages directily to the exchange not queues and exchanges will send this messages to the queues here it is making possible one-many messaging 
+            await channel.ExchangeDeclareAsync(
+                exchange: "Ticket Details",
+                durable: true,
+                autoDelete: false,
+                type: ExchangeType.Fanout
+                );
+
+            try
+            {
+                for (int i = 0; i <= 10; i++)
+                {
+                    string message = $"{DateTime.UtcNow}-{Guid.NewGuid()}";
+                    //convert it into bytes because The message is converted into bytes because RabbitMQ sends and receives raw binary data, not .NET strings or objects.
+                    byte[] body = Encoding.UTF8.GetBytes(message);
+
+                    // we can now use the channel instance to do the basic publish
+                    await channel.BasicPublishAsync(
+                        exchange: "Ticket Details", // here we sending messaages dirrectly to queues not queues so here we add exchange name to exchange and it is not empty string,
+                        routingKey: string.Empty, //here we are publishing to fanout exchange not queues so there is no need to add routing key 
+                        mandatory: true, // to push mandatorily use this queue named messages
+                        basicProperties: new BasicProperties { Persistent = true },
+                        body: body); // what data or what messages need to sent 
+
+                    Console.WriteLine(message);
+                    await Task.Delay(2000);
+                }
+                return new SuccessOrErrorResponseDto<string>
+                {
+                    StatusCode = 200,
+                    Messege = "payment has been completed and sned messages in queue",
+                };
+            }
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<string>
+                {
+                    StatusCode = 500,
                     Messege = ex.Message,
                 };
             }

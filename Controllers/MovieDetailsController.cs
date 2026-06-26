@@ -5,6 +5,7 @@ using movie_booking.Application;
 using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Request.showlistingsearch.queryparams;
 using movie_booking.Dtos.Response;
+using movie_booking.Dtos.Response.Theatre;
 using movie_booking.Models;
 using movie_booking.services;
 
@@ -98,6 +99,18 @@ namespace movie_booking.Controllers
         public async Task<IActionResult> GetShowLists([FromQuery] Showinfodetails ShowDetails)
         {
             var response = await this._movieDetailBL.GetShowLists(ShowDetails);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
+        [HttpGet("PaymentSuccess")]
+        public async Task<IActionResult> isPaymentSuccess()
+        {
+            var response = await this._movieDetailBL.isPaymentSuccess();
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)

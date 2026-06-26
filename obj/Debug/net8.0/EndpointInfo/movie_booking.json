@@ -474,6 +474,18 @@
         }
       }
     },
+    "/api/MovieDetails/PaymentSuccess": {
+      "get": {
+        "tags": [
+          "MovieDetails"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Theatre/firstLevelOnboard": {
       "post": {
         "tags": [

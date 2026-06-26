@@ -294,6 +294,16 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "isPaymentSuccess",
+    "RelativePath": "api/MovieDetails/PaymentSuccess",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.TheatreController",
     "Method": "FirstLevelTheatreOnBoard",
     "RelativePath": "api/Theatre/firstLevelOnboard",

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using movie_booking.Models;
+using movie_booking.Models.FileUpload;
 using movie_booking.Models.Ttheatre;
 
 namespace movie_booking.data
@@ -22,6 +23,7 @@ namespace movie_booking.data
         public DbSet<ScreenRow> ScreenRows { get; set; }
         public DbSet<TheatreSeat> TheatreSeats { get; set; }
         public DbSet<ShowsList> ShowsLists { get; set; }
+        public DbSet<FileMeta> FileMeta { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

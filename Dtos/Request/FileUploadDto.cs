@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using movie_booking.SmartEnums;
+using System.Text.Json.Serialization;
 
 namespace movie_booking.Dtos.Request
 {
@@ -6,8 +7,8 @@ namespace movie_booking.Dtos.Request
     {
         public string FileName { get; set; }
         public long FileSize { get; set; }
-        [JsonConverter(typeof(JsonStringEnumConverter))]
-        public FileContentTypeKey FileContentType { get; set; }
+        //[JsonConverter(typeof(JsonStringEnumConverter))]
+        public string FileContentType { get; set; }
     }
 
     public enum FileContentTypeKey

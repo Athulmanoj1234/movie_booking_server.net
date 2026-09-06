@@ -72,6 +72,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "movie_booking.Controllers.Files",
+    "Method": "FileUploadIssue",
+    "RelativePath": "api/Files/upload",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "FileUpload",
+        "Type": "System.Collections.Generic.List\u00601[[movie_booking.Dtos.Request.FileUploadDto, movie_booking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "movie_booking.Controllers.MovieDetailsController",
     "Method": "AddActorInfo",
     "RelativePath": "api/MovieDetails/Add-Actor",

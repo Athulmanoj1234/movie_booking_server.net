@@ -120,6 +120,46 @@
         }
       }
     },
+    "/api/Files/upload": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FileUploadDto"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FileUploadDto"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FileUploadDto"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/MovieDetails/Add-Director": {
       "post": {
         "tags": [
@@ -878,6 +918,24 @@
             "items": {
               "$ref": "#/components/schemas/ActorInfo"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FileUploadDto": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fileContentType": {
+            "type": "string",
             "nullable": true
           }
         },

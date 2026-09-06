@@ -22,6 +22,7 @@ builder.Services.AddScoped<TheatreBL>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordHashService>();
 builder.Services.AddScoped<MovieDetailsService>();
+builder.Services.AddScoped<FileUploadService>();
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

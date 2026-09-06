@@ -122,11 +122,9 @@ namespace movie_booking.data
                 .HasMany(sr => sr.TheatreSeats)
                 .WithOne(ts => ts.ScreenRow);
 
+            modelBuilder.Entity<FileMeta>()
+                .HasIndex(fm => fm.FileName);
+                
         }
-
-
-
-
-
     }
 }

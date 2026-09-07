@@ -149,3 +149,5 @@ C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\staticw
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_booking.sourcelink.json
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\movie_booking.staticwebassets.runtime.json
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\RabbitMQ.Client.dll
+C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\AWSSDK.Core.dll
+C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\AWSSDK.S3.dll

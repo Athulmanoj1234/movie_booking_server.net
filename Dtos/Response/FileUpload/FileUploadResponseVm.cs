@@ -12,5 +12,7 @@ namespace movie_booking.Dtos.Response.FileUpload
         public Guid FileId { get; set; }
         public string FileName { get; set; }
         public string FileUploadStatus { get; set; }
+        public string? FileContentType { get; set; }
+        public string PresignedUrl { get; set; }
     }
 }

@@ -11,10 +11,11 @@ namespace movie_booking.services
     public class FileUploadService
     {
         private ApplicationDbContext _dbContext;
-
-        public FileUploadService(ApplicationDbContext DbContext)
+        private readonly R2StorageService _r2StorageService;
+        public FileUploadService(ApplicationDbContext DbContext, R2StorageService R2StorageService)
         {
             this._dbContext = DbContext;
+            this._r2StorageService = R2StorageService;
         }
 
         public async Task<SuccessOrErrorResponseDto<FileUploadResponseVm>> AddFileMetadata(List<FileUploadDto> FileUpload)
@@ -46,7 +47,9 @@ namespace movie_booking.services
                 {
                     FileId = cfe.Id,
                     FileName = cfe.FileName,
-                    FileUploadStatus = FileUploadStatuses.Uploading.ToString()
+                    FileUploadStatus = FileUploadStatuses.Uploading.ToString(),
+                    //FileContentType = FileContentType.FromKey(cfe.FileContenType.ToString()).Value,
+                    PresignedUrl = this._r2StorageService.GetPresignedUploadUrl(cfe.FileName, FileContentType.FromValue(cfe.FileContenType).Value)
                 }).ToList();
 
                 return new SuccessOrErrorResponseDto<FileUploadResponseVm>()
@@ -55,7 +58,6 @@ namespace movie_booking.services
                     Messege = "Added file meta data successfully",
                     Data = new FileUploadResponseVm {
                         AddedFiles = createdFiles,
-                        PresignedUrl = "url"
                     }
                 };
             }

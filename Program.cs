@@ -1,10 +1,15 @@
+using Amazon.Runtime;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using movie_booking.Application;
+using movie_booking.Controllers;
 using movie_booking.data;
 using movie_booking.services;
 using System.Text;
+using static System.Net.WebRequestMethods;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";  //cors policy name
 // Add services to the container.
@@ -23,6 +28,7 @@ builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<PasswordHashService>();
 builder.Services.AddScoped<MovieDetailsService>();
 builder.Services.AddScoped<FileUploadService>();
+builder.Services.AddScoped<R2StorageService>();
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -59,6 +65,34 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
     };
+});
+
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var accessKey = configuration["R2:AccessKeyId"];
+    var secretKey = configuration["R2:SecretAccessKey"];
+    var accountId = configuration["R2:AccountId"];
+
+    var credentials = new BasicAWSCredentials(accessKey, secretKey);
+    var clientConfig = new AmazonS3Config
+    {
+        ServiceURL = $"https://{accountId}.r2.cloudflarestorage.com",
+        ForcePathStyle = true // Required for R2 path-style routing ie the 
+        //without configuring path style -
+        //https://
+        //     movie - files.
+        //     123456.
+        //     r2.cloudflarestorage.com /
+        //     poster(example file name).jpg
+        //with path style -
+        //     https://
+        //      123456.r2.cloudflarestorage.com /
+        //      movie - files /
+        //      poster.jpg
+    };
+
+    return new AmazonS3Client(credentials, clientConfig);
 });
 
 var app = builder.Build();

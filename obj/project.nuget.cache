@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "IljvIl7cj84=",
+  "dgSpecHash": "vmgwF/67LHA=",
   "success": true,
   "projectFilePath": "C:\\Users\\athul\\source\\repos\\movie_booking\\movie_booking\\movie_booking.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\athul\\.nuget\\packages\\awssdk.core\\4.0.102.3\\awssdk.core.4.0.102.3.nupkg.sha512",
+    "C:\\Users\\athul\\.nuget\\packages\\awssdk.s3\\4.0.102.5\\awssdk.s3.4.0.102.5.nupkg.sha512",
     "C:\\Users\\athul\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\athul\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
     "C:\\Users\\athul\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

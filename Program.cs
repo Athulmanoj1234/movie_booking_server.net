@@ -29,6 +29,7 @@ builder.Services.AddScoped<PasswordHashService>();
 builder.Services.AddScoped<MovieDetailsService>();
 builder.Services.AddScoped<FileUploadService>();
 builder.Services.AddScoped<R2StorageService>();
+builder.Services.AddScoped<ClamAvScanner>();
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

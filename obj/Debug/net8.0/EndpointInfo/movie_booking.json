@@ -160,6 +160,27 @@
         }
       }
     },
+    "/api/Files/virustest": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "FileName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/MovieDetails/Add-Director": {
       "post": {
         "tags": [

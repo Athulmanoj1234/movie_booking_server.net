@@ -12,10 +12,12 @@ namespace movie_booking.services
     {
         private ApplicationDbContext _dbContext;
         private readonly R2StorageService _r2StorageService;
-        public FileUploadService(ApplicationDbContext DbContext, R2StorageService R2StorageService)
+        private readonly ClamAvScanner _clamAvScanner;
+        public FileUploadService(ApplicationDbContext DbContext, R2StorageService R2StorageService, ClamAvScanner clamAvScanner )
         {
             this._dbContext = DbContext;
             this._r2StorageService = R2StorageService;
+            this._clamAvScanner = clamAvScanner;
         }
 
         public async Task<SuccessOrErrorResponseDto<FileUploadResponseVm>> AddFileMetadata(List<FileUploadDto> FileUpload)
@@ -69,5 +71,25 @@ namespace movie_booking.services
                 };
             }
         }
+
+        public async Task<SuccessOrErrorResponseDto<FileMeta>> UploadedFileScannedDetails(string FileName)
+        {
+            Stream fileStream = await this._r2StorageService.GetObjectFromR2(FileName);
+            bool isSecure = await this._clamAvScanner.ScanFileAsync(fileStream);
+
+            if (isSecure) {
+                return new SuccessOrErrorResponseDto<FileMeta>()
+                {
+                    StatusCode = 200,
+                    Messege = "NO viruses or malwares in the file"
+                };
+            }
+            return new SuccessOrErrorResponseDto<FileMeta>()
+            {
+                StatusCode = 400,
+                Messege = "file is virused"
+            };
+        }
     }
+
 }

@@ -1,5 +1,6 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
+using System.Threading.Tasks;
 
 namespace movie_booking.services
 {
@@ -44,6 +45,20 @@ namespace movie_booking.services
 
             var url = this._s3Client.GetPreSignedURL(request);
             return url;
+        }
+
+        public async Task<Stream> GetObjectFromR2(string FileName) {
+
+            // first need to create request for getting the object from the r2 object storage using bucket name and file name
+            var request = new GetObjectRequest()
+            {
+                BucketName = this._bucketName,
+                Key = FileName
+            };
+            // get file response from the s3 client object request
+            var objectRequestResponse = await this._s3Client.GetObjectAsync(request);
+            // returns streaming object - is an object that gives you access to the body/ data of the R2 response.
+            return objectRequestResponse.ResponseStream;
         }
 
     }

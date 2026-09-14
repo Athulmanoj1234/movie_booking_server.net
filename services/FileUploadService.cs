@@ -75,20 +75,39 @@ namespace movie_booking.services
         public async Task<SuccessOrErrorResponseDto<FileMeta>> UploadedFileScannedDetails(string FileName)
         {
             Stream fileStream = await this._r2StorageService.GetObjectFromR2(FileName);
-            bool isSecure = await this._clamAvScanner.ScanFileAsync(fileStream);
+            ClamAvScannedResponse scannedResponse = await this._clamAvScanner.ScanFileAsync(fileStream);
 
-            if (isSecure) {
+            if (!scannedResponse.IsDefaultFound && scannedResponse.IsScanningCompleted)
+            {
                 return new SuccessOrErrorResponseDto<FileMeta>()
                 {
                     StatusCode = 200,
-                    Messege = "NO viruses or malwares in the file"
+                    Messege = scannedResponse.ScannedMessage,
                 };
             }
-            return new SuccessOrErrorResponseDto<FileMeta>()
+            else if (scannedResponse.IsDefaultFound)
             {
-                StatusCode = 400,
-                Messege = "file is virused"
-            };
+                return new SuccessOrErrorResponseDto<FileMeta>()
+                {
+                    StatusCode = 400,
+                    Messege = scannedResponse.ScannedMessage,
+                };
+            }
+            else if (!scannedResponse.IsDefaultFound && !scannedResponse.IsScanningCompleted)
+            {
+                return new SuccessOrErrorResponseDto<FileMeta>()
+                {
+                    StatusCode = 500,
+                    Messege = scannedResponse.ScannedMessage,
+                };
+            }
+            else {
+                return new SuccessOrErrorResponseDto<FileMeta>()
+                {
+                    StatusCode = 500,
+                    Messege = "something wrong in the file scanning",
+                };
+            }
         }
     }
 

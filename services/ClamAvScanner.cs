@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using System.IO;
 using System.Net;
@@ -24,6 +25,7 @@ namespace movie_booking.services
             // first get file data from the r2 object file storage from the stream
 
             // set the maximum number of bytes can be read from the stream at a time
+
             try
             {
                 byte[] buffer = new byte[8192];

@@ -167,6 +167,14 @@
         ],
         "parameters": [
           {
+            "name": "FileId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
             "name": "FileName",
             "in": "query",
             "schema": {

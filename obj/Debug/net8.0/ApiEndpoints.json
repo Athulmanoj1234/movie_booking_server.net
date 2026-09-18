@@ -96,6 +96,11 @@
     "Order": 0,
     "Parameters": [
       {
+        "Name": "FileId",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
         "Name": "FileName",
         "Type": "System.String",
         "IsRequired": false

@@ -27,8 +27,8 @@ namespace movie_booking.Controllers
 
         [HttpGet("virustest")]
         //Http
-        public async Task<IActionResult> UploadedFileScannedDetails([FromQuery] string FileName) {
-            var result = await this.FileUploadService.UploadedFileScannedDetails(FileName);
+        public async Task<IActionResult> UploadedFileScannedDetails([FromQuery] Guid FileId, string FileName) {
+            var result = await this.FileUploadService.UploadedFileScannedDetails(FileId, FileName);
             return Ok(result);
         }
     }

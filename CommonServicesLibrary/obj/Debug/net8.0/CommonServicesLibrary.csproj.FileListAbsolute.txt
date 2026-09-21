@@ -1,0 +1,12 @@
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\bin\Debug\net8.0\CommonServicesLibrary.deps.json
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\bin\Debug\net8.0\CommonServicesLibrary.dll
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\bin\Debug\net8.0\CommonServicesLibrary.pdb
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.csproj.AssemblyReference.cache
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.AssemblyInfoInputs.cache
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.AssemblyInfo.cs
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.csproj.CoreCompileInputs.cache
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.dll
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\refint\CommonServicesLibrary.dll
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.pdb
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\ref\CommonServicesLibrary.dll

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using movie_booking.data;
+using CommonServicesLibrary.data;
 using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
-using movie_booking.Models;
+using CommonServicesLibrary.Models;
 using System.IO;
 
 namespace movie_booking.services
@@ -128,9 +128,9 @@ namespace movie_booking.services
 
         public async Task<SuccessOrErrorResponseDto<MovieRelationalData>> DirectorActorWriterExists(string DirectorName, string ActorName, string WriterName) {
             
-            SuccessOrErrorResponseDto<DirectorInfo> DirectorExists = await this.directorExists(DirectorName);
-            SuccessOrErrorResponseDto<WriterInfo> WriterExists = await this.WriterExists(WriterName);
-            SuccessOrErrorResponseDto<ActorInfo> ActorExists = await this.ActorExists(ActorName);
+            var DirectorExists = await this.directorExists(DirectorName);
+            var WriterExists = await this.WriterExists(WriterName);
+            var ActorExists = await this.ActorExists(ActorName);
 
             if (DirectorExists.IsSuccess && ActorExists.IsSuccess && WriterExists.IsSuccess) {
                 return new SuccessOrErrorResponseDto<MovieRelationalData>

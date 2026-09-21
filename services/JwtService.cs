@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using movie_booking.data;
-using movie_booking.Models;
+using CommonServicesLibrary.data;
+using CommonServicesLibrary.Models;
 using System.ComponentModel;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

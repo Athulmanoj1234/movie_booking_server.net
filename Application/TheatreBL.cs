@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using movie_booking.data;
+using CommonServicesLibrary.data;
 using movie_booking.Dtos.Request.Theatre.FirstLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.FourthLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
 using movie_booking.Dtos.Response.Theatre;
-using movie_booking.Models;
-using movie_booking.Models.Ttheatre;
+using CommonServicesLibrary.Models;
+using CommonServicesLibrary.Models.Ttheatre;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization.Formatters;

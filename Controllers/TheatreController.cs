@@ -7,8 +7,8 @@ using movie_booking.Dtos.Request.Theatre.SecondLevelUploadDto;
 using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
 using movie_booking.Dtos.Response.Theatre;
-using movie_booking.Models;
-using movie_booking.Models.Ttheatre;
+using CommonServicesLibrary.Models;
+using CommonServicesLibrary.Models.Ttheatre;
 
 namespace movie_booking.Controllers
 {

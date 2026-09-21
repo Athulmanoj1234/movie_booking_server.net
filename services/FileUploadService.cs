@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using movie_booking.data;
+using CommonServicesLibrary.data;
 using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Response;
 using movie_booking.Dtos.Response.FileUpload;
-using movie_booking.Models.FileUpload;
+using CommonServicesLibrary.Models.FileUpload;
 using movie_booking.SmartEnums;
 using RabbitMQ.Client;
 using System.Text;

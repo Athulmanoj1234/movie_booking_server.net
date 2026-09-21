@@ -1,4 +1,4 @@
-﻿using movie_booking.Models;
+﻿using CommonServicesLibrary.Models;
 
 namespace movie_booking.Dtos.Response
 {

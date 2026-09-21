@@ -1,19 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.IdentityModel.Tokens;
-using movie_booking.data;
+﻿using Microsoft.EntityFrameworkCore;
+using CommonServicesLibrary.data;
 using movie_booking.Dtos.Request;
 using movie_booking.Dtos.Request.showlistingsearch.queryparams;
-using movie_booking.Dtos.Request.Theatre.ThirdLevelUploadDto;
 using movie_booking.Dtos.Response;
-using movie_booking.Dtos.Response.Theatre;
-using movie_booking.Models;
-using movie_booking.Models.Ttheatre;
+using CommonServicesLibrary.Models;
 using movie_booking.services;
 using RabbitMQ.Client;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace movie_booking.Application
@@ -344,7 +336,7 @@ namespace movie_booking.Application
 
             try
             {
-                MovieInfo movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.Id == MovieId);
+                var movieInfo = await this._dbContext.MovieInfos.FirstOrDefaultAsync(mi => mi.Id == MovieId);
                 if (movieInfo is null)
                 {
                     return new SuccessOrErrorResponseDto<DirectorWriterActorUpdateDto>()
@@ -355,7 +347,7 @@ namespace movie_booking.Application
                     };
                 }
 
-                foreach (DirectorInfo director in DirectorWriterActorUpdateData.DirectorData)
+                foreach (var director in DirectorWriterActorUpdateData.DirectorData)
                 {
                     if (director.DirectorName is null || director.Id == null)
                     {
@@ -370,7 +362,7 @@ namespace movie_booking.Application
                     movieInfo.DirectorInfo.Add(directorInfo);
                 }
 
-                foreach (WriterInfo writer in DirectorWriterActorUpdateData.WriterData)
+                foreach (var writer in DirectorWriterActorUpdateData.WriterData)
                 {
                     if (writer.WriterName is null || writer.Id == null)
                     {
@@ -385,7 +377,7 @@ namespace movie_booking.Application
                     movieInfo.WriterInfo.Add(writerInfo);
                 }
 
-                foreach (ActorInfo actor in DirectorWriterActorUpdateData.ActorData)
+                foreach (var actor in DirectorWriterActorUpdateData.ActorData)
                 {
                     if (actor is null || actor.Id == null)
                     {

@@ -24,7 +24,7 @@ namespace movie_booking.Controllers
 
         [HttpPost("Add-Director")]
         public async Task<IActionResult> AddDirectorInfo(DirectorInfoDto directorInfo) {
-            SuccessOrErrorResponseDto<DirectorInfo> response = await this._movieDetailBL.AddDirectorInfo(directorInfo);
+            var response = await this._movieDetailBL.AddDirectorInfo(directorInfo);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
@@ -37,7 +37,7 @@ namespace movie_booking.Controllers
         [HttpPost("Add-Actor")]
         public async Task<IActionResult> AddActorInfo(ActorInfoDto ActorInfo)
         {
-            SuccessOrErrorResponseDto<ActorInfo> response = await this._movieDetailBL.AddActorInfo(ActorInfo);
+            var response = await this._movieDetailBL.AddActorInfo(ActorInfo);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
@@ -49,7 +49,7 @@ namespace movie_booking.Controllers
         [HttpPost("Add-Writer")]
         public async Task<IActionResult> AddWriterInfo(WriterInfoDto WriterInfo)
         {
-            SuccessOrErrorResponseDto<WriterInfo> response = await this._movieDetailBL.AddWriterInfo(WriterInfo);
+            var response = await this._movieDetailBL.AddWriterInfo(WriterInfo);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
@@ -61,7 +61,7 @@ namespace movie_booking.Controllers
         [HttpPost("Add-MovieInfo")]
         public async Task<IActionResult> AddMovieInfo([FromForm]MovieInfoDto MovieInfo)
         {
-            SuccessOrErrorResponseDto<MovieInfo> response = await this._movieDetailBL.AddMovieInfo(MovieInfo);
+            var response = await this._movieDetailBL.AddMovieInfo(MovieInfo);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)
@@ -74,7 +74,7 @@ namespace movie_booking.Controllers
         //[Route("{id: int}")]
         public async Task<IActionResult> GetMovieInfo(int id) {
 
-            SuccessOrErrorResponseDto<MovieInfo> response = await this._movieDetailBL.GetMovieDetails(id);
+            var response = await this._movieDetailBL.GetMovieDetails(id);
 
             if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
             if (response.StatusCode >= 500 && response.StatusCode < 600)

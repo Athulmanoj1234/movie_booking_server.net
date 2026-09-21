@@ -9,6 +9,7 @@ using movie_booking.Controllers;
 using movie_booking.data;
 using movie_booking.services;
 using System.Text;
+using CommonServicesLibrary;
 using static System.Net.WebRequestMethods;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";  //cors policy name
@@ -34,9 +35,11 @@ builder.Services.AddScoped<ClamAvScanner>();
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
-);
+//builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+//);
+
+builder.Services.AddServicesInLibrary(builder.Configuration);
 
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -68,33 +71,33 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddSingleton<IAmazonS3>(sp =>
-{
-    var configuration = sp.GetRequiredService<IConfiguration>();
-    var accessKey = configuration["R2:AccessKeyId"];
-    var secretKey = configuration["R2:SecretAccessKey"];
-    var accountId = configuration["R2:AccountId"];
+//builder.Services.AddSingleton<IAmazonS3>(sp =>
+//{
+//    var configuration = sp.GetRequiredService<IConfiguration>();
+//    var accessKey = configuration["R2:AccessKeyId"];
+//    var secretKey = configuration["R2:SecretAccessKey"];
+//    var accountId = configuration["R2:AccountId"];
 
-    var credentials = new BasicAWSCredentials(accessKey, secretKey);
-    var clientConfig = new AmazonS3Config
-    {
-        ServiceURL = $"https://{accountId}.r2.cloudflarestorage.com",
-        ForcePathStyle = true // Required for R2 path-style routing ie the 
-        //without configuring path style -
-        //https://
-        //     movie - files.
-        //     123456.
-        //     r2.cloudflarestorage.com /
-        //     poster(example file name).jpg
-        //with path style -
-        //     https://
-        //      123456.r2.cloudflarestorage.com /
-        //      movie - files /
-        //      poster.jpg
-    };
+//    var credentials = new BasicAWSCredentials(accessKey, secretKey);
+//    var clientConfig = new AmazonS3Config
+//    {
+//        ServiceURL = $"https://{accountId}.r2.cloudflarestorage.com",
+//        ForcePathStyle = true // Required for R2 path-style routing ie the 
+//        //without configuring path style -
+//        //https://
+//        //     movie - files.
+//        //     123456.
+//        //     r2.cloudflarestorage.com /
+//        //     poster(example file name).jpg
+//        //with path style -
+//        //     https://
+//        //      123456.r2.cloudflarestorage.com /
+//        //      movie - files /
+//        //      poster.jpg
+//    };
 
-    return new AmazonS3Client(credentials, clientConfig);
-});
+//    return new AmazonS3Client(credentials, clientConfig);
+//});
 
 var app = builder.Build();
 

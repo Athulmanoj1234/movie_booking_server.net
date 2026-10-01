@@ -43,3 +43,36 @@ Rate Limiting
 
         Working
             The number of queries a user or system can make to a service in a predetermined period of time can be managed by rate limitation. A service might permit 100 requests per minute, for instance. Any additional requests will be blocked or slowed down by the system until the time window is reset once that limit is reached.
+
+
+    Rate Limiting algorithms-
+       1. Fixed window rate limiting - it specifies how much requests in an specified window can be get handled 
+           ie if window expiry is 10 seconds and its limit is 10 so in ten seconds ten requests can be get handled
+
+           eg for registration with options
+
+           -  
+           builder.Services.AddRateLimiter(rateLimiterOptions =>
+            {
+                rateLimiterOptions.AddFixedWindowLimiter("fixed", options =>
+                    {
+                        options.PermitLimit = 10;  // requests limit in one window
+                        options.Window = TimeSpan.FromSeconds(10); // window expiry ie for one window how much time is the expiry 
+                        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;  // the requests that was in the queue processing order ie the the requests comes first in the queue process first and last request process last
+                        options.QueueLimit = 5;  //when the limit is reached how much requests are allowed to wait in the queue
+                    });
+            });
+        
+        2. slidiing window rate limiting - 
+        
+            builder.Services.AddRateLimiter(rateLimiterOptions =>
+            {
+                rateLimiterOptions.AddSlidingWindowLimiter("sliding", options =>
+                {
+                    options.PermitLimit = 10;
+                    options.Window = TimeSpan.FromSeconds(10);
+                    options.SegmentsPerWindow = 2;  //says to how much segments should the window to be gets divided.
+                    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    options.QueueLimit = 5;
+                });
+            });

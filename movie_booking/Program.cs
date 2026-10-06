@@ -11,8 +11,9 @@ using movie_booking.services;
 using System.Text;
 using CommonServicesLibrary;
 using static System.Net.WebRequestMethods;
-using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";  //cors policy name
 // Add services to the container.
@@ -74,16 +75,64 @@ builder.Services.AddAuthentication(options =>
 });
 
 // implementing sliding window ratelimiter for login endpoint
-builder.Services.AddRateLimiter(rateLimiterOptions =>
+builder.Services.AddRateLimiter(options =>
 {
-    rateLimiterOptions.AddSlidingWindowLimiter("sliding", options =>
+    //rateLimiterOptions.AddSlidingWindowLimiter("sliding", options =>
+    //{
+    //    options.PermitLimit = 5; // how much requests in one window timespan
+    //    options.Window = TimeSpan.FromSeconds(10);
+    //    options.SegmentsPerWindow = 2; // to how many segments should window should get break down
+    //    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; // how the rejected requests comes ie the requests that were in the queue in the oldest that will process first.
+    //    options.QueueLimit = 5; // upto how much rejected requests will stored in queue
+    //});
+
+    // policy based because it needs to add separately to an endpoint ie specifically to an endpoint
+    options.AddPolicy<string>("ip-and-user", httpContext =>
     {
-        options.PermitLimit = 5; // how much requests in one window timespan
-        options.Window = TimeSpan.FromSeconds(10);
-        options.SegmentsPerWindow = 2; // to how many segments should window should get break down
-        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst; // how the rejected requests comes ie the requests that were in the queue in the oldest that will process first.
-        options.QueueLimit = 5; // upto how much rejected requests will stored in queue
+        var ip =
+            httpContext.Connection.RemoteIpAddress?.ToString()
+            ?? "unknown";
+
+        var user =
+            httpContext.User.Identity?.Name
+            ?? "anonymous";
+
+        var ipLimiter =
+            PartitionedRateLimiter.Create<HttpContext, string>(
+                _ =>
+                {
+                    return RateLimitPartition.GetSlidingWindowLimiter(
+                        ip,
+                        _ => new SlidingWindowRateLimiterOptions
+                        {
+                            PermitLimit = 5,
+                            Window = TimeSpan.FromSeconds(10),
+                            SegmentsPerWindow = 2,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 5,
+                        });
+                }
+                );
+
+        var userLimiter =
+            PartitionedRateLimiter.Create<HttpContext, string>(
+                _ =>
+                {
+                    return RateLimitPartition.GetSlidingWindowLimiter(
+                        user,
+                        _ => new SlidingWindowRateLimiterOptions
+                        {
+                            PermitLimit = 5,
+                            Window = TimeSpan.FromSeconds(10),
+                            SegmentsPerWindow = 2,
+                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                            QueueLimit = 5,
+                        });
+                });
+        return PartitionedRateLimiter.CreateChained(ipLimiter, userLimiter);
+
     });
+
 });
 
 //builder.Services.AddSingleton<IAmazonS3>(sp =>

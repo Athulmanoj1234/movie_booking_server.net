@@ -1,18 +1,25 @@
 using Amazon.Runtime;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Amazon.S3;
+using Amazon.S3.Model;
+using Azure.Core;
+using CommonServicesLibrary;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.VisualBasic;
 using movie_booking.Application;
 using movie_booking.Controllers;
 using movie_booking.data;
 using movie_booking.services;
+using movie_booking.services.RateLimitingServices;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using CommonServicesLibrary;
-using static System.Net.WebRequestMethods;
 using System.Threading.RateLimiting;
-using Microsoft.AspNetCore.RateLimiting;
+using static System.Net.WebRequestMethods;
 
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";  //cors policy name
@@ -74,6 +81,38 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
+// create ip based partitioned ratelimiter in sliding window algorithm
+var _ipLimiter = PartitionedRateLimiter.Create<string, string>(ip =>
+                   // get the partition ratelimiter based on the partition key in here it is ip
+                   // await _ipLimiter.AcquireAsync("192.168.1.10", 1); when this code is called ie when the request needs to check the acquisition the RateLimitPartition.Get() is called 
+                   //However, RateLimitPartition.Get itself is not the method that checks whether a request is allowed.It supplies the partition information and the factory that can create the limiter for that partition.The actual permit acquisition happens when you call AcquireAsync or another acquisition API.
+                   RateLimitPartition.Get(ip,
+   _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
+   {
+       PermitLimit = 5,
+       Window = TimeSpan.FromMinutes(1),
+       SegmentsPerWindow = 2,
+       QueueLimit = 0,
+       AutoReplenishment = true
+   }
+        )
+    ));
+
+var _userLimiter = PartitionedRateLimiter.Create<string, string>(adminId =>
+                   // creating partition key based on the user details from the token
+                   RateLimitPartition.Get(adminId,
+   _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
+   {
+       PermitLimit = 10,
+       Window = TimeSpan.FromMinutes(1),
+       SegmentsPerWindow = 2,
+       QueueLimit = 0,
+       AutoReplenishment = true
+   }
+        )
+    ));
+
 // implementing sliding window ratelimiter for login endpoint
 builder.Services.AddRateLimiter(options =>
 {
@@ -93,45 +132,39 @@ builder.Services.AddRateLimiter(options =>
             httpContext.Connection.RemoteIpAddress?.ToString()
             ?? "unknown";
 
-        var user =
-            httpContext.User.Identity?.Name
-            ?? "anonymous";
+        var adminId = httpContext.User
+            .FindFirst(JwtRegisteredClaimNames.Jti)?.Value ?? "anonymous";
 
-        var ipLimiter =
-            PartitionedRateLimiter.Create<HttpContext, string>(
-                _ =>
-                {
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        ip,
-                        _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 5,
-                            Window = TimeSpan.FromSeconds(10),
-                            SegmentsPerWindow = 2,
-                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                            QueueLimit = 5,
-                        });
-                }
-                );
-
-        var userLimiter =
-            PartitionedRateLimiter.Create<HttpContext, string>(
-                _ =>
-                {
-                    return RateLimitPartition.GetSlidingWindowLimiter(
-                        user,
-                        _ => new SlidingWindowRateLimiterOptions
-                        {
-                            PermitLimit = 5,
-                            Window = TimeSpan.FromSeconds(10),
-                            SegmentsPerWindow = 2,
-                            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
-                            QueueLimit = 5,
-                        });
-                });
-        return PartitionedRateLimiter.CreateChained(ipLimiter, userLimiter);
+        // Create coordinator for this request's
+        // IP + user.
+        //
+        // IMPORTANT:
+        // The actual IP/user limiter state is NOT
+        // stored inside this coordinator.
+        //
+        // The state is stored inside the two
+        // shared PartitionedRateLimiter objects above.
+        return new IpUserRateLimiting(
+            ip,
+            adminId,
+            _ipLimiter,
+            _userLimiter);
 
     });
+
+    // when the request more than the permit count then rejection response needs to be handled 
+
+    options.OnRejected = async (
+        context,
+        cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode =
+            StatusCodes.Status429TooManyRequests;
+
+        await context.HttpContext.Response.WriteAsync(
+            "Too many requests.",
+            cancellationToken);
+    };
 
 });
 

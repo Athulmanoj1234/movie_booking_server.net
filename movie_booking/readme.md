@@ -63,7 +63,7 @@ Rate Limiting
                     });
             });
         
-        2. slidiing window rate limiting - 
+        2. slidiing window rate limiting - the window is divided into segements based on the segements per window and the older segments requests will be flus
         
             builder.Services.AddRateLimiter(rateLimiterOptions =>
             {
@@ -76,3 +76,201 @@ Rate Limiting
                     options.QueueLimit = 5;
                 });
             });
+
+
+
+        3. Token Bucket rate limiting - in token bucket rate limiting the rate limiting is done based on the tokens in the bucket
+
+
+
+        2. How the sliding window is structured
+Imagine the timer boundaries align at 0, 30, 60, 90, and 120 seconds.
+The timeline of segments
+Segment 1
+0–30s
+
+Segment 2
+30–60s
+
+
+Active window: 0–60 seconds
+
+Segment 2
+30–60s
+
+Segment 3
+60–90s
+
+
+Active window: 30–90 seconds
+
+Segment 3
+60–90s
+
+Segment 4
+90–120s
+
+
+Active window: 60–120 seconds
+
+The window advances by one segment every 30 seconds in this illustration. The oldest segment is removed from the active window, and the segment following it becomes part of the window.
+This is not four independent buckets, each with two permits. The limit of two applies across the active window.
+3. Full request execution flow
+Let's trace what happens when requests arrive at your API.
+Assume the limiter's segment boundaries align at 0, 30, 60, 90 seconds, and so on. The exact timing depends on the timer's initialization.
+Step 1
+
+A request arrives
+The middleware attempts to acquire a permit from the limiter.
+
+
+
+Step 2
+
+The limiter checks available permits
+If a permit is available, it is consumed and the request is allowed to proceed. Otherwise, the limiter checks the queue configuration.
+
+
+
+Step 3
+
+The request is queued or rejected
+With QueueLimit = 5, up to five pending acquisitions can wait. If the queue is full, another acquisition is rejected.
+
+
+
+Step 4
+
+The automatic timer advances the segments
+As the window moves, usage in the expired segment is recycled, returning those permits to the available capacity.
+
+
+
+Step 5
+
+A queued acquisition may be granted a permit
+The oldest waiting acquisition is prioritized. If it receives a permit, its awaiting operation completes and the request can continue through the middleware pipeline.
+
+
+
+Microsoft describes the sliding-window algorithm as recycling requests from the expired segment one window back into the available permit count. 
+
+Microsoft Learn
+
+
+
+4. Detailed timeline: two requests arrive near the end of a segment
+Let's return to your example:
+- Request A arrives at 59.0s.
+- Request B arrives at 59.5s.
+- Both consume the two available permits.
+- Request C arrives at 59.8s and waits in the queue.
+The segment containing A and B is the 30–60s segment.
+Time	Segment event	A and B's usage	Can C proceed?
+59–60s	Segment 2 is active	Both permits consumed	No; it waits
+60s	Segment 3 begins	Segment 2's usage remains counted	No
+90s	Segment 4 begins	Segment 2's usage is recycled in this illustrative alignment	Yes, if a permit is available and C is next in the queue
+Notice the subtlety: A and B's usage can be recycled at the next relevant segment advancement, rather than exactly 60 seconds after each request arrived.
+Important clarification: The segmented sliding-window algorithm is an approximation, not an exact per-request rolling 60-second timer. With only two segments, expiration is relatively coarse. A request near the end of a segment can stop counting much sooner than 60 seconds after it arrived. Increasing SegmentsPerWindow makes the approximation finer, at the cost of additional bookkeeping. 
+
+Microsoft Learn
+
+
+
+5. How the queue works
+Your queue settings are:
+QueueLimit = 5,
+QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+AutoReplenishment = true
+
+
+Suppose both permits are consumed and three requests arrive:
+Request A → Acquires permit
+Request B → Acquires permit
+
+Request C → Waits in queue (1)
+Request D → Waits in queue (2)
+Request E → Waits in queue (3)
+
+
+When capacity becomes available, the oldest queued acquisition is prioritized:
+A segment expires
+       |
+       v
+Capacity becomes available
+       |
+       v
+Request C receives a permit
+       |
+       v
+Request C continues through the pipeline
+
+
+The queue holds pending permit acquisitions, not extra permits. If capacity becomes available for only one request, the other queued requests must continue waiting.
+Also, AutoReplenishment = true does not itself create new permits every 30 seconds. It enables the timer that advances the sliding-window segments; the amount of capacity freed depends on the usage recorded in the expired segment.
+6. What happens when the queue is full?
+Suppose the limit is reached and five acquisitions are already waiting.
+Permit limit reached
+       |
+       v
+Queue has 5 waiting acquisitions
+       |
+       v
+Another request arrives
+       |
+       v
+Queue is full
+       |
+       v
+Acquisition is rejected
+
+
+In ASP.NET Core, a rejected rate-limit acquisition can result in a 429 Too Many Requests response, depending on your middleware configuration. 
+
+Microsoft Learn
+
+
+
+7. Fixed Window vs Sliding Window
+Behavior	Fixed Window	Sliding Window
+How time is tracked	One fixed-duration counter	Multiple segments that advance over time
+When usage is cleared	All usage at the fixed-window boundary	Usage in an expired segment is recycled
+Boundary bursts	Can allow a burst across consecutive windows	Reduces boundary bursts by retaining usage across segments
+Queue support	Yes, when configured	Yes, when configured
+Exact per-request expiration	No	No; segment-based approximation
+For example, with Fixed Window, two requests at 59s can consume both permits, then the counter resets at 60s, allowing two more requests immediately. With Sliding Window, whether those two requests still count at 60s depends on the segment in which their usage was recorded and whether that segment has expired.
+8. Applying this to your IP-and-user rate limiter
+In your custom IpUserRateLimiting implementation, the flow has an additional layer:
+Incoming HTTP request
+        |
+        v
+Identify IP address and admin ID
+        |
+        v
+Find the IP + admin coordinator partition
+        |
+        v
+Acquire from the IP sliding-window limiter
+        |
+        +---- Rejected/queued? Handle that result
+        |
+        v
+Acquire from the user sliding-window limiter
+        |
+        +---- Rejected? Dispose the IP lease
+        |
+        v
+Return combined lease
+        |
+        v
+Middleware allows request to continue
+
+
+One important caveat: disposing a lease from a time-based limiter does not refund a permit that has already been consumed. So if the IP limiter grants a permit but the user limiter rejects, that IP usage can still count until its segment expires. 
+
+Microsoft Learn
+
+
+
+9. Final summary for your documentation
+The ASP.NET Core sliding-window rate limiter divides a configured time window into smaller segments. Each incoming request must acquire a permit. If no permit is available, its acquisition may wait in a queue or be rejected, depending on the queue configuration. With automatic replenishment enabled, the limiter advances its segments periodically and recycles usage from expired segments, making capacity available to subsequent or queued acquisitions. Unlike Fixed Window, it does not reset the entire counter at one fixed boundary; however, its segment-based expiration is approximate rather than an exact timer for each request.

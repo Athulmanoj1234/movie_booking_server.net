@@ -90,10 +90,11 @@ var _ipLimiter = PartitionedRateLimiter.Create<string, string>(ip =>
                    RateLimitPartition.Get(ip,
    _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
    {
-       PermitLimit = 5,
+       PermitLimit = 2,
        Window = TimeSpan.FromMinutes(1),
        SegmentsPerWindow = 2,
-       QueueLimit = 0,
+       QueueLimit = 5,
+       QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
        AutoReplenishment = true
    }
         )
@@ -104,7 +105,7 @@ var _userLimiter = PartitionedRateLimiter.Create<string, string>(adminId =>
                    RateLimitPartition.Get(adminId,
    _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
    {
-       PermitLimit = 10,
+       PermitLimit = 5,
        Window = TimeSpan.FromMinutes(1),
        SegmentsPerWindow = 2,
        QueueLimit = 0,
@@ -144,12 +145,19 @@ builder.Services.AddRateLimiter(options =>
         //
         // The state is stored inside the two
         // shared PartitionedRateLimiter objects above.
-        return new IpUserRateLimiting(
+
+        // for each ip and admin create separate instances 
+        var outerPartition = $"{ip}:{adminId}";
+        // so outer manager decides the request should go to which IpUserRateLimiting instance even if 
+        // and we does not need to put inside the RateLimitPartition.Create  beacuse the Addpolicy does that for us internally 
+        return RateLimitPartition.Get<string>(outerPartition,
+            _ => { 
+            return new IpUserRateLimiting(
             ip,
             adminId,
             _ipLimiter,
             _userLimiter);
-
+            });
     });
 
     // when the request more than the permit count then rejection response needs to be handled 
@@ -211,7 +219,11 @@ app.UseCors(MyAllowSpecificOrigins);  //Adds the CORS middleware to the HTTP req
 //It checks every incoming request’s Origin header (the domain the request came from).
 
 app.UseAuthentication(); //If the token is valid, this middleware it creates a ClaimsPrincipal (the user).
+
+app.UseRateLimiter();
+
 app.UseAuthorization();
+
 
 app.MapControllers();
 

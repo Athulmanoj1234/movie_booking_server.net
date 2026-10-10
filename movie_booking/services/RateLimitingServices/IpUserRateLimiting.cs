@@ -28,7 +28,7 @@ namespace movie_booking.services.RateLimitingServices
         protected override async ValueTask<RateLimitLease> AcquireAsyncCore(int permitCount, CancellationToken cancellationToken) {
 
             // first check if the ip ratelimiter has the permit can be acquired based on the permit count, so the booleon result can be stored in a lease 
-            var ipLease = await this._ipLimiter.AcquireAsync(this._ip, 1, cancellationToken);
+            var ipLease = await this._ipLimiter.AcquireAsync(this._ip, permitCount, cancellationToken);
 
             // we need to check if the current request users ip is acquired or ratelimter accepts the ip
             if (!ipLease.IsAcquired) {
@@ -41,6 +41,7 @@ namespace movie_booking.services.RateLimitingServices
             // check for the userLease
             if (!userLease.IsAcquired) {
                 // dispose the used iplease
+                ipLease.Dispose();
                 return userLease;
             }
 
@@ -55,8 +56,8 @@ namespace movie_booking.services.RateLimitingServices
         //    No permits available, QueueLimit = 0 The request is rejected immediately.
         protected override RateLimitLease AttemptAcquireCore(int permitCount)
         {
-            throw new NotSupportedException(
-                "Use AcquireAsync.");
+            // return a failed ratelimit lease for now to execution pass from the synchronous acquisation to asynchronous acquisation
+            return new FailedLease();
         }
 
         public override RateLimiterStatistics? GetStatistics() {
@@ -100,6 +101,22 @@ namespace movie_booking.services.RateLimitingServices
             base.Dispose(disposing);
         }
 
+    }
+
+    public sealed class FailedLease : RateLimitLease
+    {
+        public override bool IsAcquired => false;
+
+        public override IEnumerable<string> MetadataNames =>
+            Array.Empty<string>();
+
+        public override bool TryGetMetadata(
+            string metadataName,
+            out object? metadata)
+        {
+            metadata = null;
+            return false;
+        }
     }
 
 }

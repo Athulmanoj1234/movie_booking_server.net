@@ -419,9 +419,17 @@ namespace movie_booking.Application
                 //    .Where<ShowsList>(sl => sl.ShowDate == filterDate)
                 //    .Include(sl => sl.Movie).ToListAsync();
 
+                // find the theatre location timezone
+                TimeZoneInfo theatreLocationTimeZoneId = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                // using the theatre location timezone id convert the current time from utc to local timing
+                DateTime currentLocalTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, theatreLocationTimeZoneId); 
+                
                 var showLists = await this._dbContext.MovieInfos
                     .Where(mi => mi.Id == ShowDetails.MovieID)
-                    .Include(mi => mi.MovieShowList)
+                    .Include(mi => mi.MovieShowList
+                          .Where(sl => sl.ShowDate == filterDate 
+                                                 // adds one hour extra to the current local time because bookiing will be closed for a show before 1 hour 
+                             && sl.ShowStart > currentLocalTime.Add(TimeSpan.FromHours(1)).TimeOfDay))  // we are extracting time from the Datetime ie if value of the currentLocalTime is Date: October 27, 2026 and Time: 7:30:45 PM Now, what if you need only the time and don't need the date? That's where TimeOfDay comes in. The result is 19:30:45. 
                     .FirstOrDefaultAsync();
                     
 

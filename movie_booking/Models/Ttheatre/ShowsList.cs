@@ -10,6 +10,7 @@ namespace movie_booking.Models.Ttheatre
         public TimeSpan ShowEnd { get; set; }
         public int? ScreenId { get; set; }
         public int? MovieInfoId { get; set; }
+        public string ShowDimension { get; set; } = "2d";
         public Screen Screen { get; set; }
 
         [JsonIgnore]

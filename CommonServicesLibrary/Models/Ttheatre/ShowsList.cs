@@ -11,6 +11,7 @@ namespace CommonServicesLibrary.Models.Ttheatre
         public int? ScreenId { get; set; }
         public int? MovieInfoId { get; set; }
         public Screen Screen { get; set; }
+        public string ShowDimension { get; set; } = "2d";
 
         [JsonIgnore]
         public MovieInfo Movie { get; set; }

@@ -90,7 +90,7 @@ var _ipLimiter = PartitionedRateLimiter.Create<string, string>(ip =>
                    RateLimitPartition.Get(ip,
    _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
    {
-       PermitLimit = 2,
+       PermitLimit = 5,
        Window = TimeSpan.FromMinutes(1),
        SegmentsPerWindow = 2,
        QueueLimit = 5,
@@ -105,7 +105,7 @@ var _userLimiter = PartitionedRateLimiter.Create<string, string>(adminId =>
                    RateLimitPartition.Get(adminId,
    _ => new SlidingWindowRateLimiter(new SlidingWindowRateLimiterOptions
    {
-       PermitLimit = 5,
+       PermitLimit = 2,
        Window = TimeSpan.FromMinutes(1),
        SegmentsPerWindow = 2,
        QueueLimit = 0,

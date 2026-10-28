@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using movie_booking.Application;
 using movie_booking.Dtos.Request;
 using movie_booking.Models;
@@ -75,7 +76,7 @@ namespace movie_booking.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Admin")]
+        [EnableRateLimiting("ip-and-user")]
         [HttpGet("AdminOnly")]
         public string AdminOnly() {
             return $"this is only for admin only access";

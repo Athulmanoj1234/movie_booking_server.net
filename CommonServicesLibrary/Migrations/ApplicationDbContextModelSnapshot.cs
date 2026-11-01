@@ -325,6 +325,31 @@ namespace CommonServicesLibrary.Migrations
                     b.ToTable("ScreenRows");
                 });
 
+            modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.ShowSeat", b =>
+                {
+                    b.Property<int>("ShowListId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShowTheatreSeatId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AvailabilityStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LockExpiry")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LockToken")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ShowListId", "ShowTheatreSeatId");
+
+                    b.HasIndex("ShowTheatreSeatId");
+
+                    b.ToTable("ShowSeat");
+                });
+
             modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.ShowsList", b =>
                 {
                     b.Property<int>("Id")
@@ -437,20 +462,11 @@ namespace CommonServicesLibrary.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool?>("IsBooked")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsLocked")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("ScreenId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ScreenRowId")
                         .HasColumnType("int");
-
-                    b.Property<bool?>("SeatAvailabilityStatus")
-                        .HasColumnType("bit");
 
                     b.Property<string>("SeatNumber")
                         .IsRequired()
@@ -658,6 +674,25 @@ namespace CommonServicesLibrary.Migrations
                     b.Navigation("Theatre");
                 });
 
+            modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.ShowSeat", b =>
+                {
+                    b.HasOne("CommonServicesLibrary.Models.Ttheatre.ShowsList", "ShowList")
+                        .WithMany("ShowSeats")
+                        .HasForeignKey("ShowListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CommonServicesLibrary.Models.Ttheatre.TheatreSeat", "ShowTheatreSeat")
+                        .WithMany("ShowSeats")
+                        .HasForeignKey("ShowTheatreSeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ShowList");
+
+                    b.Navigation("ShowTheatreSeat");
+                });
+
             modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.ShowsList", b =>
                 {
                     b.HasOne("CommonServicesLibrary.Models.MovieInfo", "Movie")
@@ -777,6 +812,11 @@ namespace CommonServicesLibrary.Migrations
                     b.Navigation("TheatreSeats");
                 });
 
+            modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.ShowsList", b =>
+                {
+                    b.Navigation("ShowSeats");
+                });
+
             modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.TheatreInfo", b =>
                 {
                     b.Navigation("Screen");
@@ -786,6 +826,11 @@ namespace CommonServicesLibrary.Migrations
                 {
                     b.Navigation("TheatreInfo")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CommonServicesLibrary.Models.Ttheatre.TheatreSeat", b =>
+                {
+                    b.Navigation("ShowSeats");
                 });
 
             modelBuilder.Entity("CommonServicesLibrary.Models.WriterInfo", b =>

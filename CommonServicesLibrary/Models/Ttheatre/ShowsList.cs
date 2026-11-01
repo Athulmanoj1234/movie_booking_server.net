@@ -16,5 +16,7 @@ namespace CommonServicesLibrary.Models.Ttheatre
         [JsonIgnore]
         public MovieInfo Movie { get; set; }
         public ICollection<TheatreSeat>? Seats { get; set; } = new List<TheatreSeat>();
+
+        public ICollection<ShowSeat> ShowSeats { get; set; } = new List<ShowSeat>();
     }
 }

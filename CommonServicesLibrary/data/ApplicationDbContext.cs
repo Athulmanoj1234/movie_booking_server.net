@@ -124,6 +124,23 @@ namespace CommonServicesLibrary.data
 
             modelBuilder.Entity<FileMeta>()
                 .HasIndex(fm => fm.FileName);
+
+            modelBuilder.Entity<ShowSeat>(entity => {
+                entity.HasKey(ss => new {
+                    ss.ShowListId,
+                    ss.ShowTheatreSeatId,
+                });
+
+                //one recored of show seat ie only will have one showlist id - 501 but that showlist with
+                //id 501 will be associated with many showseat records like that also from showseat to theatre seat
+                entity.HasOne(ss => ss.ShowList)
+                .WithMany(sl => sl.ShowSeats)
+                .HasForeignKey(ss => ss.ShowListId);
+
+                entity.HasOne(ss => ss.ShowTheatreSeat)
+                .WithMany(st => st.ShowSeats)
+                .HasForeignKey(ss => ss.ShowTheatreSeatId);
+            });
                 
         }
     }

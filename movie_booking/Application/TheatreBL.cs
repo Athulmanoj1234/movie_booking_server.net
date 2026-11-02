@@ -280,7 +280,10 @@ namespace movie_booking.Application
                         //this._dbContext.TheatreSeats.Add(new TheatreSeat() { 
                         //    ShowLists = new List<ShowsList>() { showListEntity } 
                         //});
-                        showListEntity.Seats.Add(item);
+                        // we are directly inserting in the showlists entities showseat(many to many) entity
+                        showListEntity.ShowSeats.Add(new ShowSeat { 
+                            ShowTheatreSeatId = item.Id,
+                        });
                     };
 
                 }

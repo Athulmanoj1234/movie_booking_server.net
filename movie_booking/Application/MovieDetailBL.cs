@@ -7,6 +7,7 @@ using CommonServicesLibrary.Models;
 using movie_booking.services;
 using RabbitMQ.Client;
 using System.Text;
+using CommonServicesLibrary.Models.Ttheatre;
 
 namespace movie_booking.Application
 {
@@ -477,6 +478,10 @@ namespace movie_booking.Application
                     Messege = ex.Message,
                 };
             }
+        }
+
+        public async Task<SuccessOrErrorResponseDto<ShowSeat>> GetShowSeatLayout(int ShowListId) {
+            return new SuccessOrErrorResponseDto<ShowSeat> { };
         }
 
         public async Task<SuccessOrErrorResponseDto<string>> isPaymentSuccess() {

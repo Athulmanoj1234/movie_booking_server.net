@@ -107,6 +107,17 @@ namespace movie_booking.Controllers
             return Ok(response);
         }
 
+        [HttpGet("GetSeatLayoutFromShow")]
+        public async Task<IActionResult> GetSeatLayoutFromShow([FromQuery] int ShowListId) {
+            var response = await this._movieDetailBL.GetShowSeatLayout(ShowListId);
+
+            if (response.StatusCode >= 400 && response.StatusCode < 500) return BadRequest(response.Messege);
+            if (response.StatusCode >= 500 && response.StatusCode < 600)
+                return StatusCode(StatusCodes.Status500InternalServerError, response.Messege);
+
+            return Ok(response);
+        }
+
         [HttpGet("PaymentSuccess")]
         public async Task<IActionResult> isPaymentSuccess()
         {

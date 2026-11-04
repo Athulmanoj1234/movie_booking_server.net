@@ -152,8 +152,8 @@ namespace movie_booking.Application
         {
             try
             {
-                Screen? screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.ScreenName == screenRowsDto.ScreenName);
-                TheatreInfo? theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(theatre => theatre.TheatreTitle == screenRowsDto.TheatreName);
+                Screen? screenInfo = await _dbContext.Screens.FirstOrDefaultAsync(screen => screen.Id == screenRowsDto.ScreenId);
+                TheatreInfo? theatreInfo = await _dbContext.TheatreInfos.FirstOrDefaultAsync(theatre => theatre.Id == screenRowsDto.TheatreId);
 
                 if (screenInfo is null || theatreInfo is null)
                 {
@@ -181,10 +181,11 @@ namespace movie_booking.Application
                 {
                     var theatreSeat = new TheatreSeat()
                     {
-                        SeatNumber = screenRowsDto.RowName + i,
+                        SeatNumber = ScreenRowEntity.RowName + i,
                         //SeatAvailabilityStatus = screenRowsDto.TheatreSeatAvailability,
-                        SeatTicketPrice = screenRowsDto.RowTicketPrice,
-                        ScreenId = screenInfo.Id,
+                        SeatTicketPrice = ScreenRowEntity.RowTicketPrice,
+                        ScreenId = ScreenRowEntity.ScreenId,
+                        ScreenRowId = ScreenRowEntity.Id,
                     };
                     //if (screenRowsDto?.NotAvailableSeatNumber.Count != 0)
                     //{

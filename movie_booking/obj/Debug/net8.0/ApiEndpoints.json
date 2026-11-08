@@ -285,6 +285,22 @@
   },
   {
     "ContainingType": "movie_booking.Controllers.MovieDetailsController",
+    "Method": "GetSeatLayoutFromShow",
+    "RelativePath": "api/MovieDetails/GetSeatLayoutFromShow",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ShowListId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "movie_booking.Controllers.MovieDetailsController",
     "Method": "GetShowLists",
     "RelativePath": "api/MovieDetails/GetShowLists",
     "HttpMethod": "GET",

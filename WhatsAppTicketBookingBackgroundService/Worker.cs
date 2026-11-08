@@ -2,7 +2,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-namespace WhatsAppTicketCustomer
+namespace WhatsAppTicketBookingBackgroundService
 {
     public class Worker : BackgroundService
     {

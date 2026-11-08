@@ -8,6 +8,8 @@ using movie_booking.services;
 using RabbitMQ.Client;
 using System.Text;
 using CommonServicesLibrary.Models.Ttheatre;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace movie_booking.Application
 {
@@ -481,6 +483,34 @@ namespace movie_booking.Application
         }
 
         public async Task<SuccessOrErrorResponseDto<ShowSeat>> GetShowSeatLayout(int ShowListId) {
+
+            // first need to establish connection to interact asp.net core with the sql server db so that we first create connection object, and using is used because the 
+            // the connnection is disposed off after execution leaves this block
+           using SqlConnection connection = new SqlConnection(
+                this._configuration["Server=localhost\\SQLEXPRESS;Database=MovieBookingDb;Trusted_connection=true;TrustServerCertificate=true;"]);
+            {
+                using SqlCommand command = new SqlCommand()
+                {
+                    // to execute a command first needs to provide its connection
+                    Connection = connection,
+                    // then what command type is it a normal sql query or stored procedure
+                    CommandType = System.Data.CommandType.StoredProcedure,
+                    // so next is to give the actual query or stored procedure name as command text 
+                    CommandText = "getSeatlayoutByShow"
+                };
+                // next is to add parameters for the sp
+               command.Parameters.Add("@ShowId", SqlDbType.Int).Value = ShowListId;
+
+               // we only created connection object to actually communicate via this connection we need to open to synchronously or asynchronously
+               await connection.OpenAsync();
+               
+
+            }
+
+            //before opening the connection ado.net needs to know that the command type is noraml sql query or stored procedure so we select it and add with the command
+            
+
+
             return new SuccessOrErrorResponseDto<ShowSeat> { };
         }
 

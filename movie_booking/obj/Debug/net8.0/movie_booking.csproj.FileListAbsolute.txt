@@ -145,7 +145,6 @@ C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\refint\
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_booking.pdb
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_booking.genruntimeconfig.cache
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\ref\movie_booking.dll
-C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\movie_booking.sourcelink.json
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\movie_booking.staticwebassets.runtime.json
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\RabbitMQ.Client.dll
@@ -153,3 +152,4 @@ C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\AWSSDK.
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\AWSSDK.S3.dll
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\CommonServicesLibrary.dll
 C:\Users\athul\source\repos\movie_booking\movie_booking\bin\Debug\net8.0\CommonServicesLibrary.pdb
+C:\Users\athul\source\repos\movie_booking\movie_booking\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

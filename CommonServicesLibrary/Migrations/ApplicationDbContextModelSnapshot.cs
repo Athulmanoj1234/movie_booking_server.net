@@ -337,10 +337,10 @@ namespace CommonServicesLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LockExpiry")
+                    b.Property<DateTime?>("LockExpiry")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("LockToken")
+                    b.Property<Guid?>("LockToken")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("ShowListId", "ShowTheatreSeatId");

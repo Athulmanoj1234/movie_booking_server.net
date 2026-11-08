@@ -10,3 +10,6 @@ C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0
 C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\refint\CommonServicesLibrary.dll
 C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.pdb
 C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\ref\CommonServicesLibrary.dll
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.sourcelink.json
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\bin\Debug\net8.0\CommonServicesLibrary.runtimeconfig.json
+C:\Users\athul\source\repos\movie_booking\CommonServicesLibrary\obj\Debug\net8.0\CommonServicesLibrary.genruntimeconfig.cache

@@ -543,6 +543,28 @@
         }
       }
     },
+    "/api/MovieDetails/GetSeatLayoutFromShow": {
+      "get": {
+        "tags": [
+          "MovieDetails"
+        ],
+        "parameters": [
+          {
+            "name": "ShowListId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/MovieDetails/PaymentSuccess": {
       "get": {
         "tags": [
@@ -1030,8 +1052,8 @@
           "rowSeatsCount",
           "rowTicketPrice",
           "rowType",
-          "screenName",
-          "theatreName"
+          "screenId",
+          "theatreId"
         ],
         "type": "object",
         "properties": {
@@ -1054,13 +1076,13 @@
           "isAnySeatNotAvailable": {
             "type": "boolean"
           },
-          "screenName": {
-            "minLength": 1,
-            "type": "string"
+          "screenId": {
+            "type": "integer",
+            "format": "int32"
           },
-          "theatreName": {
-            "minLength": 1,
-            "type": "string"
+          "theatreId": {
+            "type": "integer",
+            "format": "int32"
           },
           "notAvailableSeatNumber": {
             "type": "array",
@@ -1069,69 +1091,6 @@
               "format": "int32"
             },
             "nullable": true
-          },
-          "showListInfo": {
-            "$ref": "#/components/schemas/ShowListInfo"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ShowListDateTimeInfo": {
-        "type": "object",
-        "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "showListsTime": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShowListTimeInfo"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ShowListInfo": {
-        "type": "object",
-        "properties": {
-          "movieId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "showLists": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ShowListDateTimeInfo"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ShowListTimeInfo": {
-        "type": "object",
-        "properties": {
-          "hours": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

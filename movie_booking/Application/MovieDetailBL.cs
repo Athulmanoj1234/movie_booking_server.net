@@ -10,6 +10,7 @@ using System.Text;
 using CommonServicesLibrary.Models.Ttheatre;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using movie_booking.Dtos.Response.Theatre;
 
 namespace movie_booking.Application
 {
@@ -484,6 +485,8 @@ namespace movie_booking.Application
 
         public async Task<SuccessOrErrorResponseDto<ShowSeat>> GetShowSeatLayout(int ShowListId) {
 
+            SeatLayoutForShow seatLayout = null;
+
             // first need to establish connection to interact asp.net core with the sql server db so that we first create connection object, and using is used because the 
             // the connnection is disposed off after execution leaves this block
            using SqlConnection connection = new SqlConnection(
@@ -503,6 +506,42 @@ namespace movie_booking.Application
 
                // we only created connection object to actually communicate via this connection we need to open to synchronously or asynchronously
                await connection.OpenAsync();
+
+                using (SqlDataReader reader = await command.ExecuteReaderAsync()) {
+                    Dictionary<int, RowDetails> RowDetails = new Dictionary<int, RowDetails>();
+                    while (await reader.ReadAsync()) {
+                        // show list primary details only will have one rows ie same
+                        // values it cannot be inserted en each routed trip of the reader
+                        if (seatLayout is null)
+                        {
+                            seatLayout = new SeatLayoutForShow()
+                            {
+                                ShowId = reader.GetInt32(0),
+                                // we have converted from datetime to Dateonly for the startdate
+                                ShowDate = DateOnly.FromDateTime(reader.GetDateTime(1)),
+                                ShowStart = reader.GetTimeSpan(2),
+                                ShowEnd = reader.GetTimeSpan(3),
+                                ShowDimension = reader.GetString(4),
+                                ScreenId = reader.GetInt32(5),
+                                ScreenName = reader.GetString(6)
+                            };
+                        }
+                        // vcheking 
+                        if (RowDetails.TryGetValue(reader.GetInt32(8), out var rowDetail)) {
+                            var currentRowDetails = new RowDetails()
+                            {
+                                RowId = reader.GetInt32(8),
+                                RowName = reader.GetString(9),
+                                RowSeatsCount = reader.GetInt32(10),
+                                RowTicketPrice = reader.GetInt32(11),
+                                RowType = reader.GetString(12),
+                            };
+                            // first we add to the actual showdetails list and then to keep trace we add to the dictionary
+                            seatLayout.RowDetails.Add(currentRowDetails);
+                            RowDetails.Add(currentRowDetails.RowId, currentRowDetails);
+                        }
+                    }
+                }
                
 
             }

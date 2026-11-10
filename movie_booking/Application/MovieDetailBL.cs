@@ -483,74 +483,103 @@ namespace movie_booking.Application
             }
         }
 
-        public async Task<SuccessOrErrorResponseDto<ShowSeat>> GetShowSeatLayout(int ShowListId) {
-
-            SeatLayoutForShow seatLayout = null;
-
-            // first need to establish connection to interact asp.net core with the sql server db so that we first create connection object, and using is used because the 
-            // the connnection is disposed off after execution leaves this block
-           using SqlConnection connection = new SqlConnection(
-                this._configuration["Server=localhost\\SQLEXPRESS;Database=MovieBookingDb;Trusted_connection=true;TrustServerCertificate=true;"]);
+        public async Task<SuccessOrErrorResponseDto<SeatLayoutForShow>> GetShowSeatLayout(int ShowListId) {
+            try
             {
-                using SqlCommand command = new SqlCommand()
+                // first need to establish connection to interact asp.net core with the sql server db so that we first create connection object, and using is used because the 
+                // the connnection is disposed off after execution leaves this block
+                using SqlConnection connection = new SqlConnection(
+                     "Server=localhost\\SQLEXPRESS;Database=MovieBookingDb;Trusted_connection=true;TrustServerCertificate=true;");
                 {
-                    // to execute a command first needs to provide its connection
-                    Connection = connection,
-                    // then what command type is it a normal sql query or stored procedure
-                    CommandType = System.Data.CommandType.StoredProcedure,
-                    // so next is to give the actual query or stored procedure name as command text 
-                    CommandText = "getSeatlayoutByShow"
-                };
-                // next is to add parameters for the sp
-               command.Parameters.Add("@ShowId", SqlDbType.Int).Value = ShowListId;
+                    using SqlCommand command = new SqlCommand()
+                    {
+                        // to execute a command first needs to provide its connection
+                        Connection = connection,
+                        // then what command type is it a normal sql query or stored procedure
+                        CommandType = System.Data.CommandType.StoredProcedure,
+                        // so next is to give the actual query or stored procedure name as command text 
+                        CommandText = "dbo.getSeatlayoutByShow"
+                    };
+                    // next is to add parameters for the sp
+                    command.Parameters.Add("@ShowId", SqlDbType.Int).Value = ShowListId;
 
-               // we only created connection object to actually communicate via this connection we need to open to synchronously or asynchronously
-               await connection.OpenAsync();
+                    // we only created connection object to actually communicate via this connection we need to open to synchronously or asynchronously
+                    await connection.OpenAsync();
 
-                using (SqlDataReader reader = await command.ExecuteReaderAsync()) {
-                    Dictionary<int, RowDetails> RowDetails = new Dictionary<int, RowDetails>();
-                    while (await reader.ReadAsync()) {
-                        // show list primary details only will have one rows ie same
-                        // values it cannot be inserted en each routed trip of the reader
-                        if (seatLayout is null)
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        SeatLayoutForShow seatLayout = null;
+                        RowDetails rowDetails = null;
+                        SeatDetails seatDetails = null;
+
+                        Dictionary<int, RowDetails> RowDetails = new Dictionary<int, RowDetails>();
+                        Dictionary<int, SeatDetails> SeatDetails = new Dictionary<int, SeatDetails>();
+                        while (await reader.ReadAsync())
                         {
-                            seatLayout = new SeatLayoutForShow()
+                            // show list primary details only will have one rows ie same
+                            // values it cannot be inserted en each routed trip of the reader
+                            if (seatLayout is null)
                             {
-                                ShowId = reader.GetInt32(0),
-                                // we have converted from datetime to Dateonly for the startdate
-                                ShowDate = DateOnly.FromDateTime(reader.GetDateTime(1)),
-                                ShowStart = reader.GetTimeSpan(2),
-                                ShowEnd = reader.GetTimeSpan(3),
-                                ShowDimension = reader.GetString(4),
-                                ScreenId = reader.GetInt32(5),
-                                ScreenName = reader.GetString(6)
-                            };
-                        }
-                        // vcheking 
-                        if (RowDetails.TryGetValue(reader.GetInt32(8), out var rowDetail)) {
-                            var currentRowDetails = new RowDetails()
+                                seatLayout = new SeatLayoutForShow()
+                                {
+                                    ShowId = reader.GetInt32(0),
+                                    // we have converted from datetime to Dateonly for the startdate
+                                    ShowDate = DateOnly.FromDateTime(reader.GetDateTime(1)),
+                                    ShowStart = reader.GetTimeSpan(2),
+                                    ShowEnd = reader.GetTimeSpan(3),
+                                    ShowDimension = reader.GetString(4),
+                                    ScreenId = reader.GetInt32(5),
+                                    ScreenName = reader.GetString(6)
+                                };
+                            }
+                            // vcheking 
+                            if (!RowDetails.TryGetValue(reader.GetInt32(8), out var rowDetail))
                             {
-                                RowId = reader.GetInt32(8),
-                                RowName = reader.GetString(9),
-                                RowSeatsCount = reader.GetInt32(10),
-                                RowTicketPrice = reader.GetInt32(11),
-                                RowType = reader.GetString(12),
-                            };
-                            // first we add to the actual showdetails list and then to keep trace we add to the dictionary
-                            seatLayout.RowDetails.Add(currentRowDetails);
-                            RowDetails.Add(currentRowDetails.RowId, currentRowDetails);
+                                rowDetails = new RowDetails()
+                                {
+                                    RowId = reader.GetInt32(8),
+                                    RowName = reader.GetString(9),
+                                    RowSeatsCount = reader.GetInt32(10),
+                                    RowTicketPrice = reader.GetInt32(11),
+                                    RowType = reader.GetString(12),
+                                };
+                                // first we add to the actual showdetails list and then to keep trace we add to the dictionary
+                                seatLayout.RowDetails.Add(rowDetails);
+                                RowDetails.Add(rowDetails.RowId, rowDetails);
+                            }
+                            // next is adding the seat details ie for the current added row details
+                            if (!SeatDetails.TryGetValue(reader.GetInt32(13), out var seatDetail))
+                            {
+                                seatDetails = new SeatDetails()
+                                {
+                                    SeatId = reader.GetInt32(13),
+                                    SeatNumber = reader.GetString(14),
+                                    SeatTicketPrice = reader.GetDecimal(15),
+                                    AvailabilityStatus = reader.GetString(16),
+                                    LockToken = reader.IsDBNull(17) ? null : reader.GetGuid(17),
+                                    LockExpiry = reader.IsDBNull(18) ? null : reader.GetDateTime(18),
+                                };
+                                rowDetails.SeatDetails.Add(seatDetails);
+                                SeatDetails.Add(seatDetails.SeatId, seatDetails);
+                            }
                         }
+                        return new SuccessOrErrorResponseDto<SeatLayoutForShow>
+                        {
+                            StatusCode = 200,
+                            IsSuccess = true,
+                            Data = seatLayout
+                        };
                     }
                 }
-               
-
             }
-
+            catch (Exception ex) {
+                return new SuccessOrErrorResponseDto<SeatLayoutForShow>
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError,
+                    Messege = ex.Message
+                };
+            }
             //before opening the connection ado.net needs to know that the command type is noraml sql query or stored procedure so we select it and add with the command
-            
-
-
-            return new SuccessOrErrorResponseDto<ShowSeat> { };
         }
 
         public async Task<SuccessOrErrorResponseDto<string>> isPaymentSuccess() {

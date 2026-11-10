@@ -25,8 +25,9 @@
     public class SeatDetails { 
         public int SeatId { get; set; }
         public required string SeatNumber { get; set; }
+        public decimal SeatTicketPrice { get; set; }
         public required string AvailabilityStatus { get; set; }
-        public DateTime LockExpiry { get; set; }
-        public Guid LockToken { get; set; }
+        public DateTime? LockExpiry { get; set; }
+        public Guid? LockToken { get; set; }
     }
 }
